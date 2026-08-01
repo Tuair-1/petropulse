@@ -20,10 +20,10 @@ for (const p of pages) {
   }
   console.log(`✓ ${p}: ${idx} 个内联脚本语法检查通过`);
 
-  /* 2. 本地资源与链接 */
+  /* 2. 本地资源与链接(跳过 JS 模板占位符 ${...}) */
   const hrefs = [...html.matchAll(/(?:href|src)="([^"#]+?)(?:#[^"]*)?"/g)].map(x => x[1]);
   for (const h of hrefs) {
-    if (/^https?:\/\//.test(h)) continue;
+    if (/^https?:\/\//.test(h) || h.includes('${')) continue;
     const target = resolve(join(dirname(join(root, p)), h));
     if (!existsSync(target)) { errors++; console.error(`✗ ${p} → 缺失资源: ${h}`); }
   }
