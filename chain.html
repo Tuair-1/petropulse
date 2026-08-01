@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>产业链全景 — PetroPulse 石化脉动</title>
+<meta name="description" content="石化产业链互动图谱:从原油开采到终端消费品的五层价值链,点击节点查看品种详情。">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--t-3); }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .chain-wrap { display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 1060px) { .chain-wrap { grid-template-columns: 1fr; } .chain-side { position: static !important; } }
+  .chain-node text { pointer-events: none; }
+  .dash-flow { stroke-dasharray: 7 9; animation: dashMove 1.5s linear infinite; }
+  @keyframes dashMove { to { stroke-dashoffset: -16; } }
+</style>
+</head>
+<body>
+
+<!-- ================= 导航 ================= -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#111c33"/>
+        <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+        <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+      </svg>
+      <span>石化脉动<span class="en">PETROPULSE</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="market.html">市场数据</a>
+      <a href="chain.html">产业链</a>
+      <a href="about.html">关于</a>
+      <a class="btn btn-primary nav-cta" href="market.html">进入数据平台</a>
+    </div>
+    <button class="nav-burger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ================= 页首 ================= -->
+<header class="page-hero">
+  <div class="container">
+    <div class="crumbs">HOME / <b>VALUE CHAIN</b></div>
+    <h1>产业链全景图谱</h1>
+    <p class="sec-sub" style="margin-top:14px">从原油、天然气与煤,到塑料、纤维与橡胶,石化工业编织出一条纵贯能源与材料的巨型价值链。<b class="hl">点击任意节点</b>查看品种档案。</p>
+    <div class="legend" style="margin-top:22px" id="legend"></div>
+  </div>
+</header>
+
+<section class="block" style="padding-top:10px">
+  <div class="container chain-wrap">
+
+    <!-- 图谱舞台 -->
+    <div class="chain-stage reveal in" style="padding-top:20px">
+      <svg id="chainSvg" viewBox="0 0 1240 980"></svg>
+    </div>
+
+    <!-- 详情面板 -->
+    <aside class="chain-side reveal in d1" aria-live="polite">
+      <div class="panel" id="sidePanel">
+        <div id="sideEmpty" class="empty">◈ 点击左侧图谱中的节点<br>查看品种与装置档案</div>
+        <div id="sideBody" style="display:none">
+          <div class="cat" id="sbCat">原料</div>
+          <h3><span id="sbName"></span><span style="font-size:12px;color:var(--t-3);font-weight:500" id="sbEn"></span></h3>
+          <p id="sbDesc"></p>
+          <div class="stat2" id="sbStats"></div>
+          <ul id="sbTags"></ul>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- ================= 页脚 ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:6px">
+          <svg viewBox="0 0 64 64" width="28" height="28" fill="none" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#111c33"/>
+            <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+            <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+          </svg>
+          <span>石化脉动<span class="en">PETROPULSE</span></span>
+        </a>
+        <p class="desc">以数据视角感知石化产业脉搏 —— 行情、产业链、企业动态与绿色转型,一站尽览。</p>
+      </div>
+      <div><h5>快速导航</h5><ul><li><a href="index.html">首页</a></li><li><a href="market.html">市场数据</a></li><li><a href="chain.html">产业链</a></li><li><a href="about.html">关于本站</a></li></ul></div>
+      <div><h5>数据平台</h5><ul><li><a href="market.html">原油价格走势</a></li><li><a href="market.html">化工品价格对比</a></li><li><a href="market.html">产能与贸易结构</a></li><li><a href="chain.html">产业链图谱</a></li></ul></div>
+      <div><h5>关于本站</h5><ul><li><a href="about.html">项目缘起</a></li><li><a href="about.html">技术架构</a></li><li><a href="about.html">数据声明</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PetroPulse 石化脉动 · 由 Claude Code 生成</span>
+      <span class="warn">本站行情与统计数据均为演示样例,不构成任何投资建议</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('chainSvg');
+  const VW = 1240, VH = 980;
+
+  /* ---------- 数据 ---------- */
+  const LAYERS = [
+    { key: 'feed',  label: '原料资源',  color: '#f6a821', y: 92 },
+    { key: 'proc',  label: '加工转化',  color: '#2dd4f8', y: 282 },
+    { key: 'base',  label: '基础化学品', color: '#34d399', y: 472 },
+    { key: 'mat',   label: '合成材料',  color: '#c084fc', y: 662 },
+    { key: 'app',   label: '终端应用',  color: '#fb923c', y: 852 }
+  ];
+
+  const NODES = [
+    /* L1 原料 */
+    { id: 'crude',  layer: 'feed', name: '原油', en: 'Crude Oil', desc: '全球大宗商品之王,炼化产业链的源头。中国对外依存度约 72%,主要进口来源为中东、俄罗斯与南美,2025 年进口约 5.4 亿吨。', stats: [['72%', '对外依存度'], ['5.42', '2025 进口(亿吨)']], tags: ['布伦特 / WTI', 'OPEC+', '地缘溢价'] },
+    { id: 'gas',    layer: 'feed', name: '天然气', en: 'Natural Gas', desc: '乙烷裂解的优质原料。页岩气革命大幅降低乙烷价格,重塑了全球乙烯的成本曲线,美国借此崛起为乙烯净出口国。', stats: [['38%', '全球乙烯产能占比(乙烷)'], ['$180', '乙烷裂解成本优势(美元/吨)']], tags: ['乙烷裂解', 'LNG', '页岩气'] },
+    { id: 'coal',   layer: 'feed', name: '煤', en: 'Coal', desc: '中国「富煤」禀赋催生了煤制烯烃(MTO)、煤制油、煤制乙二醇等独特路径,煤化工占中国化工品供给的重要份额。', stats: [['60%+', '甲醇产能占比(煤基)'], ['8.3', '煤化工占化工总产值(万亿元)']], tags: ['煤制烯烃 MTO', '气流床气化'] },
+
+    /* L2 加工 */
+    { id: 'ad',     layer: 'proc', name: '常减压蒸馏', en: 'Atmospheric & Vacuum', desc: '炼厂的第一道工序。将原油加热分馏为石脑油、煤油、柴油、渣油等馏分,是全部后续加工的起点。', stats: [['100%', '原油必经工序'], ['~55%', '轻油收率']], tags: ['常压塔', '减压塔', '一次加工'] },
+    { id: 'cracker',layer: 'proc', name: '蒸汽裂解', en: 'Steam Cracking', desc: '乙烯装置的核心工艺,以石脑油或乙烷为原料,在 800—900°C 下高温裂解,联产丙烯、丁二烯与裂解汽油。', stats: [['200+', '单套最大产能(万吨/年)'], ['~30%', '乙烯收率']], tags: ['乙烯装置', '裂解炉', '急冷'] },
+    { id: 'reformer',layer:'proc', name: '催化重整', en: 'Catalytic Reforming', desc: '以石脑油为原料生产高辛烷值汽油组分与芳烃,是纯苯、对二甲苯等芳烃的主要来源之一。', stats: [['60%', 'PX 产能源于重整芳烃'], ['98+', '重整汽油辛烷值']], tags: ['芳烃联合', 'PX / 苯'] },
+    { id: 'fcc',    layer: 'proc', name: '催化裂化 / 加氢', en: 'FCC & Hydrocracking', desc: '重油轻质化的主力装置,兼产大量丙烯;加氢裂化则提供清洁油品与优质化工原料,是炼化一体化枢纽。', stats: [['30%+', '丙烯联产来源'], ['92%', '油品质量升级贡献']], tags: ['重油加工', 'PDH 补充', '减油增化'] },
+    { id: 'gasifier',layer:'proc', name: '煤气化制合成气', en: 'Coal Gasification', desc: '煤在高温高压下与水蒸气反应生成合成气(CO+H₂),经变换与净化后制甲醇、合成氨等碳一产品。', stats: [['3000+', '单台日投煤量(吨)'], ['~90%', '碳转化率']], tags: ['水煤浆', '航天炉 / GSP'] },
+
+    /* L3 基础化学品 */
+    { id: 'ethylene',layer:'base', name: '乙烯', en: 'Ethylene C₂H₄', desc: '全球产量最大的基础化工产品,石化工业的基石,下游覆盖聚乙烯、乙二醇、苯乙烯、环氧乙烷等大宗产品。', stats: [['48.8', '中国产能(Mt/a)'], ['32.5%', '全球占比']], tags: ['三大烯烃之首', '景气风向标'] },
+    { id: 'propylene',layer:'base', name: '丙烯', en: 'Propylene C₃H₆', desc: '第二大烯烃,聚丙烯的直接原料,同时用于丙烯腈、环氧丙烷、丙烯酸等衍生品,是炼化与 PDH 装置的重要利润来源。', stats: [['52.6', '中国产能(Mt/a)'], ['78.5%', '开工率']], tags: ['聚丙烯', 'PDH', '油制 / 煤制'] },
+    { id: 'bd',     layer: 'base', name: '丁二烯', en: 'Butadiene C₄H₆', desc: '合成橡胶的关键单体,与苯乙烯共聚制丁苯橡胶(SBR),亦用于 ABS 树脂与己二腈。', stats: [['5.6', '中国产能(Mt/a)'], ['68%', '合成橡胶原料占比']], tags: ['顺丁橡胶', 'SBR', 'ABS'] },
+    { id: 'btx',    layer: 'base', name: '苯', en: 'Benzene C₆H₆', desc: '芳烃之基,经苯乙烯、己内酰胺、苯酚等路径进入塑料、尼龙与树脂世界,价格联动油市与芳烃装置负荷。', stats: [['26.4', '中国产能(Mt/a)'], ['72.8%', '开工率']], tags: ['纯苯', '重整芳烃'] },
+    { id: 'px',     layer: 'base', name: '对二甲苯 PX', en: 'Paraxylene C₈H₁₀', desc: '聚酯产业链的咽喉品种,经 PTA 一步通达涤纶纤维与 PET 瓶片,中国自给率已超 80%。', stats: [['46.2', '中国产能(Mt/a)'], ['81.3%', '开工率']], tags: ['PTA 之母', '聚酯源头'] },
+    { id: 'meoh',   layer: 'base', name: '甲醇', en: 'Methanol CH₃OH', desc: '碳一化工枢纽:既是煤制烯烃(MTO)主原料,又通往甲醛、醋酸、MTBE 与二甲醚,还兼作车船清洁燃料。', stats: [['109.6', '中国产能(Mt/a)'], ['62%', 'MTO 消费占比']], tags: ['MTO', '燃料应用', '进口依存'] },
+    { id: 'naphtha',layer: 'base', name: '石脑油', en: 'Naphtha', desc: '裂解与重整共用的轻质原料,蒸汽裂解装置的进料主力,价格紧随原油并叠加区域供需。', stats: [['$548', 'CFR 日本价(美元/吨)'], ['~40%', '裂解进料占比']], tags: ['裂解料', '重整料'] },
+
+    /* L4 合成材料 */
+    { id: 'pe',     layer: 'mat',  name: '聚乙烯 PE', en: 'Polyethylene', desc: '全球用量最大的塑料,薄膜、管材、中空容器与线缆绝缘层的首选材料,分 LDPE / HDPE / LLDPE 三大牌号。', stats: [['42.5', '中国产能(Mt/a)'], ['77.9%', '开工率']], tags: ['薄膜', '管材', '注塑'] },
+    { id: 'pp',     layer: 'mat',  name: '聚丙烯 PP', en: 'Polypropylene', desc: '从无纺布口罩到汽车保险杠的万能材料,纤维、注塑、薄膜与无纺布四大消费方向均衡分布。', stats: [['36.8', '中国产能(Mt/a)'], ['79.6%', '开工率']], tags: ['无纺布', '汽车改性', '家电注塑'] },
+    { id: 'abs',    layer: 'mat',  name: 'ABS / PS', en: 'Styrenics', desc: '苯乙烯系工程塑料,ABS 兼顾强度与光泽,是家电外壳与汽车内饰的经典之选;PS 用于发泡与透明制品。', stats: [['ABS 7.9', '中国产能(Mt/a)'], ['6.2%', '消费年均增速']], tags: ['家电', '汽车内饰', '发泡'] },
+    { id: 'rubber', layer: 'mat',  name: '合成橡胶', en: 'Synthetic Rubber', desc: '顺丁、丁苯、异戊等品种构成轮胎与橡胶制品的骨架,与天然橡胶互补形成完整胶料体系。', stats: [['3.2', '中国产量(Mt/a)'], ['55%', '轮胎消费占比']], tags: ['丁苯 SBR', '顺丁 BR', '轮胎'] },
+    { id: 'meg',    layer: 'mat',  name: '乙二醇 MEG', en: 'Mono-Ethylene Glycol', desc: '乙烯氧化产物,聚酯合成与防冻液的主要原料,中国仍需相当规模进口补充。', stats: [['25.4', '中国产能(Mt/a)'], ['58%', '聚酯消费占比']], tags: ['聚酯原料', '防冻液'] },
+    { id: 'pet',    layer: 'mat',  name: 'PET 聚酯', en: 'PET Polyester', desc: 'PTA 与乙二醇缩聚而成,一端织成涤纶纤维,一端吹成饮料瓶片,再生 PET 回收产业方兴未艾。', stats: [['82.1', '中国产能(Mt/a)'], ['70%+', '全球纤维用量占比']], tags: ['涤纶', '瓶片', '再生 PET'] },
+    { id: 'pvc',    layer: 'mat',  name: 'PVC', en: 'Polyvinyl Chloride', desc: '建筑管材型材的主材,分电石法与乙烯法两条工艺路线,与房地产周期高度相关。', stats: [['24.1', '中国产能(Mt/a)'], ['62%', '建筑消费占比']], tags: ['管材', '型材', '电石法'] },
+    { id: 'cp',     layer: 'mat',  name: '己内酰胺 → 锦纶', en: 'Caprolactam → Nylon 6', desc: '由苯经环己酮合成己内酰胺,再聚合为锦纶(尼龙 6)纤维与工程塑料,轻质耐磨。', stats: [['6.8', '中国产能(Mt/a)'], ['90%', '锦纶原料自给率']], tags: ['尼龙 6', '帘子布', '工程塑料'] },
+
+    /* L5 终端应用 */
+    { id: 'pack',   layer: 'app',  name: '包装材料', en: 'Packaging', desc: '薄膜、瓶片、发泡材料构成的包装世界是石化第一大终端,占塑料消费约四成。', tags: ['BOPP 薄膜', 'PET 瓶', 'EPS 发泡'] },
+    { id: 'auto',   layer: 'app',  name: '汽车交通', en: 'Automotive', desc: '轻量化浪潮下单车用塑料超 200kg、橡胶约 24kg,保险杠、内饰、轮胎皆出自石化。', tags: ['改性 PP', '轮胎', '轻量化'] },
+    { id: 'elec',   layer: 'app',  name: '电子家电', en: 'Electronics & Appliances', desc: 'ABS/PC 壳体、线缆绝缘、覆铜板基材,电子工业的隐形基础。', tags: ['ABS', '聚碳酸酯', '绝缘材料'] },
+    { id: 'build',  layer: 'app',  name: '建筑建材', en: 'Construction', desc: 'PVC 管材型材、保温板材与防水卷材,石化材料深度嵌入现代建筑。', tags: ['PVC', 'XPS 保温', '防水'] },
+    { id: 'tex',    layer: 'app',  name: '纺织服装', en: 'Textiles & Apparel', desc: '化纤占全球纤维供给七成以上,涤纶、锦纶与腈纶织就现代纺织体系。', tags: ['涤纶', '锦纶', '无纺布'] },
+    { id: 'health', layer: 'app',  name: '医疗健康', en: 'Healthcare', desc: '输液袋、医用导管、口罩熔喷布与药品包衣,石化材料守护生命健康。', tags: ['医用 PP', '熔喷布', '高分子辅料'] }
+  ];
+
+  const EDGES = [
+    ['crude', 'ad'], ['crude', 'cracker'], ['crude', 'reformer'],
+    ['gas', 'cracker'], ['gas', 'meoh'], ['coal', 'gasifier'], ['gasifier', 'meoh'],
+    ['ad', 'naphtha'], ['ad', 'cracker'], ['naphtha', 'cracker'], ['naphtha', 'reformer'],
+    ['cracker', 'ethylene'], ['cracker', 'propylene'], ['cracker', 'bd'], ['cracker', 'btx'],
+    ['reformer', 'btx'], ['reformer', 'px'], ['fcc', 'propylene'], ['meoh', 'ethylene'],
+    ['ethylene', 'pe'], ['ethylene', 'meg'], ['ethylene', 'abs'],
+    ['propylene', 'pp'], ['bd', 'rubber'], ['btx', 'abs'], ['btx', 'cp'], ['px', 'pet'],
+    ['meg', 'pet'],
+    ['pe', 'pack'], ['pe', 'build'], ['pp', 'auto'], ['pp', 'tex'], ['abs', 'elec'], ['abs', 'auto'],
+    ['rubber', 'auto'], ['pet', 'pack'], ['pet', 'tex'], ['pvc', 'build'], ['cp', 'tex'], ['pp', 'health']
+  ];
+
+  const byId = Object.fromEntries(NODES.map(n => [n.id, n]));
+
+  /* ---------- 渲染 ---------- */
+  const el = (tag, attrs, parent, text) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (text) n.textContent = text;
+    (parent || svg).appendChild(n);
+    return n;
+  };
+
+  const BAND_L = 128, BAND_R = 1224, NW = 168, NH = 56;
+
+  /* 节点坐标(按层均布) */
+  const pos = {};
+  NODES.forEach(n => {
+    const layer = LAYERS.find(l => l.key === n.layer);
+    const siblings = NODES.filter(m => m.layer === n.layer);
+    const i = siblings.indexOf(n);
+    const span = BAND_R - BAND_L;
+    const x = BAND_L + (span * (i + 0.5)) / siblings.length;
+    pos[n.id] = { x: x - NW / 2, y: layer.y - NH / 2, cx: x, cy: layer.y, layer };
+  });
+
+  /* 连线(先画,置于节点下层) */
+  const edgeLayer = el('g', {});
+  EDGES.forEach(([a, b], i) => {
+    const p1 = pos[a], p2 = pos[b];
+    if (!p1 || !p2) return;
+    const x1 = p1.cx, y1 = p1.cy + NH / 2 + 2;
+    const x2 = p2.cx, y2 = p2.cy - NH / 2 - 2;
+    const dy = Math.max(36, (y2 - y1) * 0.55);
+    el('path', {
+      d: `M ${x1} ${y1} C ${x1} ${y1 + dy}, ${x2} ${y2 - dy}, ${x2} ${y2}`,
+      fill: 'none', stroke: p1.layer.color, strokeWidth: 1.6, opacity: .5,
+      class: 'dash-flow', style: `animation-delay:${(-i * 0.21).toFixed(2)}s`
+    }, edgeLayer);
+  });
+
+  /* 层标签 */
+  LAYERS.forEach(l => {
+    el('text', { x: 16, y: l.y + 4, fill: l.color, 'font-size': 13, 'font-weight': 700,
+      'letter-spacing': '.2em', 'font-family': "'PingFang SC','Microsoft YaHei',sans-serif" }, null, l.label);
+    el('line', { x1: 16, x2: 96, y1: l.y + 14, y2: l.y + 14, stroke: l.color, 'stroke-width': 1.2, opacity: .45 }, null);
+  });
+
+  /* 节点 */
+  const nodeGroup = el('g', {});
+  const gNodes = {};
+  NODES.forEach(n => {
+    const p = pos[n.id];
+    const g = el('g', { class: 'chain-node', transform: `translate(${p.x} ${p.y})`, 'data-id': n.id }, nodeGroup);
+    el('rect', { x: 0, y: 0, width: NW, height: NH, rx: 13,
+      fill: '#0e1730', stroke: p.layer.color, 'stroke-width': 1.4, opacity: .96 }, g);
+    el('text', { x: NW / 2, y: NH / 2 - 2, fill: '#eef2fb', 'font-size': 14.5, 'font-weight': 700,
+      'text-anchor': 'middle', 'font-family': "'PingFang SC','Microsoft YaHei',sans-serif" }, g, n.name);
+    el('text', { x: NW / 2, y: NH / 2 + 15, fill: '#6b7893', 'font-size': 9.5,
+      'text-anchor': 'middle', 'font-family': "'Segoe UI',sans-serif" }, g, n.en);
+    g.addEventListener('click', () => select(n.id));
+    gNodes[n.id] = g;
+  });
+
+  /* ---------- 详情面板 ---------- */
+  const sbCat = document.getElementById('sbCat');
+  const sbName = document.getElementById('sbName');
+  const sbEn = document.getElementById('sbEn');
+  const sbDesc = document.getElementById('sbDesc');
+  const sbStats = document.getElementById('sbStats');
+  const sbTags = document.getElementById('sbTags');
+
+  function select(id) {
+    const n = byId[id];
+    const layer = pos[id].layer;
+    Object.values(gNodes).forEach(g => g.classList.remove('on'));
+    gNodes[id].classList.add('on');
+    document.getElementById('sideEmpty').style.display = 'none';
+    document.getElementById('sideBody').style.display = 'block';
+    sbCat.textContent = layer.label;
+    sbCat.style.color = layer.color;
+    sbName.textContent = n.name;
+    sbEn.textContent = n.en ? '  ' + n.en : '';
+    sbDesc.textContent = n.desc;
+    sbStats.innerHTML = (n.stats || []).map(s =>
+      `<div><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
+    sbStats.style.display = n.stats ? 'grid' : 'none';
+    sbTags.innerHTML = (n.tags || []).map(t => `<li>${t}</li>`).join('');
+  }
+
+  /* ---------- 图例 ---------- */
+  document.getElementById('legend').innerHTML = LAYERS.map(l =>
+    `<span><i style="background:${l.color}"></i>${l.label}</span>`).join('') +
+    '<span style="margin-left:auto">◈ 演示图谱 · 数据示意</span>';
+
+  /* 默认选中乙烯 */
+  select('ethylene');
+})();
+</script>
+</body>
+</html>

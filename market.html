@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>市场数据平台 — PetroPulse 石化脉动</title>
+<meta name="description" content="石化行业市场数据平台:原油与化工品价格走势、产能分布、贸易结构与景气指数可视化。">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .mk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 24px; }
+  .mk-grid .full { grid-column: 1 / -1; }
+  @media (max-width: 980px) { .mk-grid { grid-template-columns: 1fr; } }
+  .mk-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 26px; }
+  @media (max-width: 900px) { .mk-kpi { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .mk-kpi { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- ================= 导航 ================= -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#111c33"/>
+        <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+        <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+      </svg>
+      <span>石化脉动<span class="en">PETROPULSE</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="market.html">市场数据</a>
+      <a href="chain.html">产业链</a>
+      <a href="about.html">关于</a>
+      <a class="btn btn-primary nav-cta" href="market.html">进入数据平台</a>
+    </div>
+    <button class="nav-burger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ================= 页首 ================= -->
+<header class="page-hero">
+  <div class="container">
+    <div class="crumbs">HOME / <b>MARKET DATA</b></div>
+    <h1>市场数据平台</h1>
+    <p class="sec-sub" style="margin-top:14px">原油、大宗化工品与产业链关键指标的交互式可视化。数据为演示样例,展示设计能力与交互体验。</p>
+    <div class="mk-kpi">
+      <div class="card kpi reveal in"><div class="k">布伦特原油</div><div class="v">$59.92</div><div class="d">周涨 <b>+0.85%</b> · 年低 $54.4</div></div>
+      <div class="card kpi reveal in d1"><div class="k">石脑油 CFR 日本</div><div class="v">$548</div><div class="d">周跌 <b class="fall">-1.2%</b> · 裂解利润回升</div></div>
+      <div class="card kpi reveal in d2"><div class="k">乙烯-石脑油价差</div><div class="v">$217</div><div class="d">盈亏线 <b>$350</b> · 偏紧运行</div></div>
+      <div class="card kpi reveal in d3"><div class="k">石化景气指数</div><div class="v">62.4</div><div class="d">扩张区间(<b>&gt;50</b>) · 环比 <b>+3.2</b></div></div>
+    </div>
+  </div>
+</header>
+
+<section class="block" style="padding-top:10px">
+  <div class="container">
+    <div class="mk-grid">
+
+      <!-- 原油走势 -->
+      <div class="panel full reveal in">
+        <div class="chart-head">
+          <div><h3>国际原油价格走势</h3><div class="tag">2024.01 — 2026.07 · 周度 · 演示数据</div></div>
+          <div class="pills" id="oilRange"><button class="pill on" data-n="52">近 1 年</button><button class="pill" data-n="135">全部</button></div>
+        </div>
+        <div id="oilChart" class="chart tall"></div>
+      </div>
+
+      <!-- 化工品对比 -->
+      <div class="panel reveal in">
+        <div class="chart-head"><div><h3>化工品价格对比</h3><div class="tag">月均 · 美元/吨</div></div></div>
+        <div id="chemChart" class="chart tall"></div>
+      </div>
+
+      <!-- 右侧双图 -->
+      <div style="display:grid;gap:22px;align-content:start">
+        <div class="panel reveal in d1">
+          <div class="chart-head"><div><h3>全球乙烯产能分布</h3><div class="tag">2025 · %</div></div></div>
+          <div id="capChart" class="chart" style="height:270px"></div>
+        </div>
+        <div class="panel reveal in d2">
+          <div class="chart-head"><div><h3>石化景气指数</h3><div class="tag">荣枯线 50</div></div></div>
+          <div id="cycleChart" class="chart" style="height:270px"></div>
+        </div>
+      </div>
+
+      <!-- 产量 -->
+      <div class="panel full reveal in">
+        <div class="chart-head"><div><h3>中国主要化工品产量</h3><div class="tag">2025 · 百万吨</div></div></div>
+        <div id="prodChart" class="chart" style="height:340px"></div>
+      </div>
+
+      <!-- 贸易 -->
+      <div class="panel full reveal in">
+        <div class="chart-head"><div><h3>化工品进出口贸易额</h3><div class="tag">2021—2025 · 万亿元</div></div></div>
+        <div id="tradeChart" class="chart" style="height:320px"></div>
+      </div>
+
+      <!-- 价差 -->
+      <div class="panel full reveal in">
+        <div class="chart-head"><div><h3>乙烯—石脑油价差</h3><div class="tag">月均 · 美元/吨 · 虚线为行业盈亏平衡</div></div></div>
+        <div id="spreadChart" class="chart" style="height:330px"></div>
+      </div>
+
+      <!-- 数据表 -->
+      <div class="panel full reveal in" style="padding-bottom:16px">
+        <div class="chart-head"><div><h3>重点品种现货参考价</h3><div class="tag">2026-07-31 · 演示数据</div></div></div>
+        <div class="tbl-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>品种</th><th>市场</th><th>类别</th><th>价格</th><th>单位</th><th>周涨跌</th><th>月涨跌</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="nm">布伦特原油</td><td>ICE 期货</td><td><span class="tag raw">能源</span></td><td class="num">59.92</td><td>美元/桶</td><td class="num" style="color:var(--up)">+0.85%</td><td class="num" style="color:var(--up)">+2.10%</td></tr>
+              <tr><td class="nm">WTI 原油</td><td>NYMEX 期货</td><td><span class="tag raw">能源</span></td><td class="num">56.74</td><td>美元/桶</td><td class="num" style="color:var(--up)">+1.02%</td><td class="num" style="color:var(--up)">+3.35%</td></tr>
+              <tr><td class="nm">石脑油</td><td>CFR 日本</td><td><span class="tag raw">原料</span></td><td class="num">548</td><td>美元/吨</td><td class="num" style="color:var(--down)">-1.20%</td><td class="num" style="color:var(--down)">-4.05%</td></tr>
+              <tr><td class="nm">乙烯</td><td>CIF 东北亚</td><td><span class="tag chem">烯烃</span></td><td class="num">765</td><td>美元/吨</td><td class="num" style="color:var(--down)">-1.40%</td><td class="num" style="color:var(--down)">-3.05%</td></tr>
+              <tr><td class="nm">丙烯</td><td>FOB 韩国</td><td><span class="tag chem">烯烃</span></td><td class="num">798</td><td>美元/吨</td><td class="num" style="color:var(--up)">+0.62%</td><td class="num" style="color:var(--up)">+0.88%</td></tr>
+              <tr><td class="nm">丁二烯</td><td>CIF 东北亚</td><td><span class="tag chem">烯烃</span></td><td class="num">830</td><td>美元/吨</td><td class="num" style="color:var(--up)">+1.72%</td><td class="num" style="color:var(--up)">+2.60%</td></tr>
+              <tr><td class="nm">苯</td><td>CIF 中国</td><td><span class="tag chem">芳烃</span></td><td class="num">845</td><td>美元/吨</td><td class="num" style="color:var(--up)">+1.85%</td><td class="num" style="color:var(--up)">+5.32%</td></tr>
+              <tr><td class="nm">甲苯</td><td>CFR 中国</td><td><span class="tag chem">芳烃</span></td><td class="num">640</td><td>美元/吨</td><td class="num" style="color:var(--up)">+1.27%</td><td class="num" style="color:var(--up)">+4.10%</td></tr>
+              <tr><td class="nm">对二甲苯 PX</td><td>CFR 中国</td><td><span class="tag chem">芳烃</span></td><td class="num">936</td><td>美元/吨</td><td class="num" style="color:var(--up)">+0.44%</td><td class="num" style="color:var(--up)">+2.50%</td></tr>
+              <tr><td class="nm">甲醇</td><td>CFR 中国</td><td><span class="tag chem">碳一</span></td><td class="num">292</td><td>美元/吨</td><td class="num" style="color:var(--down)">-0.35%</td><td class="num" style="color:var(--down)">-1.55%</td></tr>
+              <tr><td class="nm">乙二醇 MEG</td><td>CFR 中国</td><td><span class="tag chem">中间体</span></td><td class="num">512</td><td>美元/吨</td><td class="num" style="color:var(--up)">+2.30%</td><td class="num" style="color:var(--up)">+6.40%</td></tr>
+              <tr><td class="nm">聚乙烯 PE(LDPE)</td><td>CFR 远东</td><td><span class="tag chem">合成树脂</span></td><td class="num">918</td><td>美元/吨</td><td class="num" style="color:var(--up)">+0.28%</td><td class="num" style="color:var(--up)">+0.95%</td></tr>
+              <tr><td class="nm">聚丙烯 PP</td><td>CFR 远东</td><td><span class="tag chem">合成树脂</span></td><td class="num">896</td><td>美元/吨</td><td class="num" style="color:var(--up)">+1.10%</td><td class="num" style="color:var(--up)">+2.65%</td></tr>
+              <tr><td class="nm">PVC</td><td>CFR 中国</td><td><span class="tag chem">合成树脂</span></td><td class="num">648</td><td>美元/吨</td><td class="num" style="color:var(--down)">-0.72%</td><td class="num" style="color:var(--down)">-2.20%</td></tr>
+              <tr><td class="nm">苯乙烯 SM</td><td>CFR 中国</td><td><span class="tag chem">中间体</span></td><td class="num">1020</td><td>美元/吨</td><td class="num" style="color:var(--up)">+0.98%</td><td class="num" style="color:var(--up)">+3.75%</td></tr>
+              <tr><td class="nm">尿素</td><td>国内主流出厂</td><td><span class="tag chem">化肥</span></td><td class="num">2385</td><td>元/吨</td><td class="num" style="color:var(--up)">+0.19%</td><td class="num" style="color:var(--up)">+0.85%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note-demo">※ 以上全部行情与统计数值均为演示样例,仅用于展示前端可视化能力,不构成任何投资建议。</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= 页脚 ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:6px">
+          <svg viewBox="0 0 64 64" width="28" height="28" fill="none" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#111c33"/>
+            <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+            <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+          </svg>
+          <span>石化脉动<span class="en">PETROPULSE</span></span>
+        </a>
+        <p class="desc">以数据视角感知石化产业脉搏 —— 行情、产业链、企业动态与绿色转型,一站尽览。</p>
+      </div>
+      <div><h5>快速导航</h5><ul><li><a href="index.html">首页</a></li><li><a href="market.html">市场数据</a></li><li><a href="chain.html">产业链</a></li><li><a href="about.html">关于本站</a></li></ul></div>
+      <div><h5>数据平台</h5><ul><li><a href="market.html">原油价格走势</a></li><li><a href="market.html">化工品价格对比</a></li><li><a href="market.html">产能与贸易结构</a></li><li><a href="chain.html">产业链图谱</a></li></ul></div>
+      <div><h5>关于本站</h5><ul><li><a href="about.html">项目缘起</a></li><li><a href="about.html">技术架构</a></li><li><a href="about.html">数据声明</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PetroPulse 石化脉动 · 由 Claude Code 生成</span>
+      <span class="warn">本站行情与统计数据均为演示样例,不构成任何投资建议</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/echarts.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+(function () {
+  const { genSeries, monthLabels } = PP;
+
+  /* --- 周度标签 --- */
+  const WEEKS = 135;
+  const weekLabels = [];
+  const d0 = new Date(2024, 0, 1);
+  for (let i = 0; i < WEEKS; i++) {
+    const d = new Date(d0.getTime() + i * 7 * 864e5);
+    weekLabels.push(`${String(d.getFullYear()).slice(2)}/${String(d.getMonth() + 1).padStart(2, '0')}`);
+  }
+
+  /* --- 1. 原油走势 --- */
+  const brent = genSeries(11, 79, WEEKS, 1.9, -0.045);
+  const wti   = genSeries(12, 74, WEEKS, 1.75, -0.04);
+  const oilChart = echarts.init(document.getElementById('oilChart'));
+  const paintOil = n => {
+    const len = Math.min(n, WEEKS);
+    oilChart.setOption({
+      ...PP_CHART_THEME,
+      animationDuration: 500,
+      grid: { ...PP_CHART_THEME.grid, top: 52 },
+      legend: { ...PP_CHART_THEME.legend },
+      xAxis: { ...PP_CHART_THEME.xAxis, data: weekLabels.slice(-len), boundaryGap: false },
+      yAxis: { ...PP_CHART_THEME.yAxis, name: '美元/桶', nameTextStyle: { color: '#6b7893' } },
+      series: [
+        { name: '布伦特', type: 'line', smooth: true, symbol: 'none', data: brent.slice(-len),
+          lineStyle: { width: 2.4, color: '#f6a821' },
+          areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(246,168,33,.3)' }, { offset: 1, color: 'rgba(246,168,33,0)' }]) },
+          markPoint: {
+            data: [{ type: 'max', name: '阶段高点' }, { type: 'min', name: '阶段低点' }],
+            symbolSize: 44,
+            label: { color: '#0a1120', fontSize: 10, fontWeight: 700 },
+            itemStyle: { color: '#f6a821' }
+          } },
+        { name: 'WTI', type: 'line', smooth: true, symbol: 'none', data: wti.slice(-len),
+          lineStyle: { width: 2, color: '#2dd4f8' } }
+      ]
+    }, true);
+  };
+  paintOil(52);
+  document.getElementById('oilRange').addEventListener('click', e => {
+    const btn = e.target.closest('.pill');
+    if (!btn) return;
+    document.querySelectorAll('#oilRange .pill').forEach(p => p.classList.remove('on'));
+    btn.classList.add('on');
+    paintOil(+btn.dataset.n);
+  });
+
+  /* --- 2. 化工品对比 --- */
+  const chem = [
+    { name: '乙烯',   color: '#f6a821', data: genSeries(21, 880, 31, 46, -1.5) },
+    { name: '丙烯',   color: '#2dd4f8', data: genSeries(22, 745, 31, 38, -1.2) },
+    { name: '苯',     color: '#34d399', data: genSeries(23, 720, 31, 34, -1.1) },
+    { name: '对二甲苯', color: '#c084fc', data: genSeries(24, 862, 31, 42, -1.2) },
+    { name: '甲醇',   color: '#fb923c', data: genSeries(25, 305, 31, 17, -0.4) }
+  ];
+  echarts.init(document.getElementById('chemChart')).setOption({
+    ...PP_CHART_THEME,
+    legend: { ...PP_CHART_THEME.legend, top: 0 },
+    grid: { ...PP_CHART_THEME.grid, top: 40 },
+    xAxis: { ...PP_CHART_THEME.xAxis, data: monthLabels(2024, 1, 31), boundaryGap: false },
+    yAxis: { ...PP_CHART_THEME.yAxis, name: '美元/吨', nameTextStyle: { color: '#6b7893' } },
+    series: chem.map(s => ({
+      name: s.name, type: 'line', smooth: true, symbol: 'none', data: s.data,
+      lineStyle: { width: 2.2, color: s.color },
+      areaStyle: s.name === '乙烯' ? { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(246,168,33,.22)' }, { offset: 1, color: 'rgba(246,168,33,0)' }]) } : undefined,
+      emphasis: { focus: 'series' }
+    }))
+  });
+
+  /* --- 3. 产能分布 --- */
+  echarts.init(document.getElementById('capChart')).setOption({
+    ...PP_CHART_THEME,
+    tooltip: { ...PP_CHART_THEME.tooltip, valueFormatter: v => v + '%' },
+    legend: { ...PP_CHART_THEME.legend, orient: 'vertical', right: 6, top: 'middle', itemGap: 14 },
+    grid: { left: 0, right: 90, top: 10, bottom: 10, containLabel: false },
+    series: [{
+      type: 'pie', radius: ['46%', '72%'], center: ['35%', '50%'],
+      itemStyle: { borderRadius: 8, borderColor: '#0d1526', borderWidth: 3 },
+      label: { show: false }, labelLine: { show: false },
+      emphasis: { scale: true, scaleSize: 6 },
+      color: ['#f6a821', '#2dd4f8', '#34d399', '#c084fc', '#fb923c', '#94a3b8'],
+      data: [
+        { name: '中国', value: 45.2 },
+        { name: '北美', value: 17.8 },
+        { name: '中东', value: 16.4 },
+        { name: '欧洲', value: 8.6 },
+        { name: '东北亚其他', value: 5.6 },
+        { name: '其他地区', value: 6.4 }
+      ]
+    }]
+  });
+
+  /* --- 4. 景气指数 --- */
+  const cycle = genSeries(41, 55, 31, 3.2, 0.2);
+  echarts.init(document.getElementById('cycleChart')).setOption({
+    ...PP_CHART_THEME,
+    legend: { ...PP_CHART_THEME.legend, top: 0 },
+    grid: { ...PP_CHART_THEME.grid, top: 34 },
+    xAxis: { ...PP_CHART_THEME.xAxis, data: monthLabels(2024, 1, 31), boundaryGap: false },
+    yAxis: { ...PP_CHART_THEME.yAxis, min: 42, max: 68 },
+    series: [{
+      name: '景气指数', type: 'line', smooth: true, symbol: 'none',
+      data: cycle,
+      lineStyle: { width: 2.6, color: '#2dd4f8' },
+      areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(45,212,248,.3)' }, { offset: 1, color: 'rgba(45,212,248,0)' }]) },
+      markLine: {
+        symbol: 'none', silent: true,
+        lineStyle: { color: 'rgba(248,113,113,.75)', type: 'dashed' },
+        label: { formatter: '荣枯线 50', color: '#f87171', fontSize: 11, position: 'insideEndTop' },
+        data: [{ yAxis: 50 }]
+      }
+    }]
+  });
+
+  /* --- 5. 产量 --- */
+  const prods = [
+    ['甲醇', 92.3], ['PTA', 71.2], ['尿素', 62.4], ['丙烯', 52.6], ['乙烯', 48.8],
+    ['聚乙烯', 42.5], ['聚丙烯', 36.8], ['乙二醇', 25.4], ['PVC', 24.1], ['苯乙烯', 14.6]
+  ].reverse();
+  echarts.init(document.getElementById('prodChart')).setOption({
+    ...PP_CHART_THEME,
+    tooltip: { ...PP_CHART_THEME.tooltip, valueFormatter: v => v + ' 百万吨' },
+    grid: { ...PP_CHART_THEME.grid, left: 70 },
+    xAxis: { ...PP_CHART_THEME.xAxis, type: 'value', splitLine: { lineStyle: { color: 'rgba(255,255,255,.055)' } } },
+    yAxis: {
+      type: 'category', data: prods.map(p => p[0]),
+      axisLine: { lineStyle: { color: 'rgba(255,255,255,.12)' } },
+      axisTick: { show: false },
+      axisLabel: { color: '#aab6cf', fontSize: 12 }
+    },
+    series: [{
+      type: 'bar', barWidth: 14,
+      data: prods.map(p => p[1]),
+      itemStyle: {
+        borderRadius: [0, 7, 7, 0],
+        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+          { offset: 0, color: '#1c2a4a' }, { offset: 1, color: '#f6a821' }
+        ])
+      },
+      label: { show: true, position: 'right', color: '#f6a821', fontSize: 11.5, fontWeight: 600 }
+    }]
+  });
+
+  /* --- 6. 贸易 --- */
+  echarts.init(document.getElementById('tradeChart')).setOption({
+    ...PP_CHART_THEME,
+    tooltip: { ...PP_CHART_THEME.tooltip, valueFormatter: v => v + ' 万亿元' },
+    legend: { ...PP_CHART_THEME.legend },
+    grid: { ...PP_CHART_THEME.grid, top: 44 },
+    xAxis: { ...PP_CHART_THEME.xAxis, data: ['2021', '2022', '2023', '2024', '2025'] },
+    yAxis: { ...PP_CHART_THEME.yAxis, name: '万亿元', nameTextStyle: { color: '#6b7893' } },
+    series: [
+      { name: '进口额', type: 'bar', barWidth: 20, data: [0.88, 0.92, 0.86, 0.90, 0.84],
+        itemStyle: { borderRadius: [6, 6, 0, 0], color: '#2b3b63' } },
+      { name: '出口额', type: 'bar', barWidth: 20, data: [0.98, 1.05, 1.12, 1.18, 1.24],
+        itemStyle: { borderRadius: [6, 6, 0, 0], color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#f6a821' }, { offset: 1, color: '#ff5e3a' }]) } }
+    ]
+  });
+
+  /* --- 7. 价差 --- */
+  const spread = genSeries(31, 480, 31, 62, 1.2).map(v => +v.toFixed(0));
+  echarts.init(document.getElementById('spreadChart')).setOption({
+    ...PP_CHART_THEME,
+    tooltip: { ...PP_CHART_THEME.tooltip, valueFormatter: v => v + ' 美元/吨' },
+    legend: { ...PP_CHART_THEME.legend },
+    grid: { ...PP_CHART_THEME.grid, top: 40 },
+    xAxis: { ...PP_CHART_THEME.xAxis, data: monthLabels(2024, 1, 31) },
+    yAxis: { ...PP_CHART_THEME.yAxis, name: '美元/吨', nameTextStyle: { color: '#6b7893' } },
+    series: [{
+      name: '乙烯-石脑油价差', type: 'bar', barWidth: '52%',
+      data: spread,
+      itemStyle: {
+        borderRadius: [4, 4, 0, 0],
+        color: params => params.value >= 350
+          ? '#34d399'
+          : params.value >= 200 ? '#f6a821' : '#f87171'
+      },
+      markLine: {
+        symbol: 'none', silent: true,
+        lineStyle: { color: 'rgba(255,255,255,.55)', type: 'dashed', width: 1.2 },
+        label: { formatter: '盈亏平衡 350', color: '#eef2fb', fontSize: 11, position: 'insideEndTop' },
+        data: [{ yAxis: 350 }]
+      }
+    }]
+  });
+
+  /* resize — 收集全部图表实例统一适配 */
+  const allCharts = [];
+  document.querySelectorAll('.chart').forEach(dom => {
+    const inst = echarts.getInstanceByDom(dom);
+    if (inst) allCharts.push(inst);
+  });
+  allCharts.push(oilChart);
+  window.addEventListener('resize', () => allCharts.forEach(c => c && c.resize()));
+})();
+</script>
+</body>
+</html>

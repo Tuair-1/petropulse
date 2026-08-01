@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于本站 — PetroPulse 石化脉动</title>
+<meta name="description" content="关于 PetroPulse 石化脉动:项目缘起、技术架构与数据声明。本站由 Claude Code 在单次会话中生成。">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ================= 导航 ================= -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#111c33"/>
+        <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+        <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+      </svg>
+      <span>石化脉动<span class="en">PETROPULSE</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="market.html">市场数据</a>
+      <a href="chain.html">产业链</a>
+      <a href="about.html">关于</a>
+      <a class="btn btn-primary nav-cta" href="market.html">进入数据平台</a>
+    </div>
+    <button class="nav-burger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ================= 页首 ================= -->
+<header class="about-hero">
+  <div class="container">
+    <span class="eyebrow center" style="margin-bottom:14px">About PetroPulse</span>
+    <h1>石化脉动 <span class="text-grad">PetroPulse</span></h1>
+    <p>一个由 <b class="hl">Claude Code</b> 在单次会话中从零生成的石化行业信息平台 —— 用数据可视化与交互设计,把这条纵贯能源与材料的巨型产业链装进一个网页。</p>
+    <div style="margin-top:30px">
+      <span class="stack-tag"><i>◈</i> 2026-08-01 单次会话生成</span>
+      <span class="stack-tag"><i>◈</i> 4 个页面 · 8 幅交互图表</span>
+      <span class="stack-tag"><i>◈</i> 42 个产业链节点</span>
+      <span class="stack-tag"><i>◈</i> 手绘炼厂夜景 SVG</span>
+    </div>
+  </div>
+</header>
+
+<section class="block" style="padding-top:20px">
+  <div class="container">
+
+    <div class="grid-2-full" style="margin-bottom:28px">
+      <div class="panel reveal in">
+        <span class="eyebrow">Why</span>
+        <h2 class="sec-title" style="font-size:1.5rem">项目缘起</h2>
+        <p style="color:var(--t-2);margin-top:12px">石化工业与每个人的生活息息相关:汽油、塑料瓶、化纤衣物、轮胎、口罩……但这条产业链极少被完整呈现。
+        本站的初衷,是以<b class="hl">可视化的方式</b>把「原油 → 炼化 → 化工品 → 材料 → 终端」的全链条讲清楚,
+        同时验证一个命题:<b class="hl-c">AI 能否独立完成一个完整、专业、美观的前端项目</b>。</p>
+      </div>
+      <div class="panel reveal in d1">
+        <span class="eyebrow">How</span>
+        <h2 class="sec-title" style="font-size:1.5rem">如何构建</h2>
+        <p style="color:var(--t-2);margin-top:12px">从零开始:先搭设计系统(配色 / 字体 / 组件规范),再逐页构建;
+        手绘炼厂夜景矢量动画、行情跑马灯、交互动画均由原生 SVG 与 CSS 实现;
+        图表采用 Apache ECharts;全站零构建工具、零框架依赖,托管于 GitHub Pages。</p>
+      </div>
+    </div>
+
+    <div class="panel reveal in" style="margin-bottom:28px">
+      <span class="eyebrow">Stack</span>
+      <h2 class="sec-title" style="font-size:1.5rem">技术架构</h2>
+      <div style="margin-top:16px">
+        <span class="stack-tag"><i>▲</i> HTML5 语义化结构</span>
+        <span class="stack-tag"><i>▲</i> CSS3 设计系统(变量 / Grid / 动画)</span>
+        <span class="stack-tag"><i>▲</i> Vanilla JavaScript (ES2020+)</span>
+        <span class="stack-tag"><i>▲</i> Apache ECharts 5.5</span>
+        <span class="stack-tag"><i>▲</i> 手绘 SVG 场景动画</span>
+        <span class="stack-tag"><i>▲</i> IntersectionObserver 滚动动效</span>
+        <span class="stack-tag"><i>▲</i> 响应式布局(桌面 / 平板 / 手机)</span>
+        <span class="stack-tag"><i>▲</i> GitHub Pages 静态托管</span>
+      </div>
+    </div>
+
+    <div class="panel reveal in" style="margin-bottom:28px;border-color:rgba(248,113,113,.25)">
+      <span class="eyebrow" style="color:var(--down)">Disclaimer</span>
+      <h2 class="sec-title" style="font-size:1.5rem">数据声明</h2>
+      <p style="color:var(--t-2);margin-top:12px">
+        <b class="hl">本站所有行情、产能、贸易与统计数值均为演示样例</b>,基于公开行业常识与合理的量级估算生成,
+        仅用于展示界面设计与交互能力,<b class="hl">不构成任何投资建议</b>,亦不可作为任何商业决策依据。
+        如需真实数据,请以官方统计与权威资讯机构发布为准。</p>
+    </div>
+
+    <div class="panel reveal in">
+      <span class="eyebrow">Map</span>
+      <h2 class="sec-title" style="font-size:1.5rem">站点地图</h2>
+      <div class="tbl-wrap" style="margin-top:16px">
+        <table class="data">
+          <thead><tr><th>页面</th><th>地址</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">首页</td><td><a href="index.html" style="color:var(--cyan)">index.html</a></td><td>炼厂夜景首屏 · 行情跑马灯 · 价格走势 · 产品中心 · 绿色转型</td></tr>
+            <tr><td class="nm">市场数据</td><td><a href="market.html" style="color:var(--cyan)">market.html</a></td><td>原油 / 化工品价格 · 产能分布 · 景气指数 · 贸易结构 · 现货参考表</td></tr>
+            <tr><td class="nm">产业链</td><td><a href="chain.html" style="color:var(--cyan)">chain.html</a></td><td>五层产业链图谱 · 42 个节点 · 点击查看品种档案</td></tr>
+            <tr><td class="nm">关于</td><td><a href="about.html" style="color:var(--cyan)">about.html</a></td><td>项目缘起 · 技术架构 · 数据声明</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 页脚 ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:6px">
+          <svg viewBox="0 0 64 64" width="28" height="28" fill="none" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#111c33"/>
+            <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+            <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+          </svg>
+          <span>石化脉动<span class="en">PETROPULSE</span></span>
+        </a>
+        <p class="desc">以数据视角感知石化产业脉搏 —— 行情、产业链、企业动态与绿色转型,一站尽览。</p>
+      </div>
+      <div><h5>快速导航</h5><ul><li><a href="index.html">首页</a></li><li><a href="market.html">市场数据</a></li><li><a href="chain.html">产业链</a></li><li><a href="about.html">关于本站</a></li></ul></div>
+      <div><h5>数据平台</h5><ul><li><a href="market.html">原油价格走势</a></li><li><a href="market.html">化工品价格对比</a></li><li><a href="market.html">产能与贸易结构</a></li><li><a href="chain.html">产业链图谱</a></li></ul></div>
+      <div><h5>关于本站</h5><ul><li><a href="about.html">项目缘起</a></li><li><a href="about.html">技术架构</a></li><li><a href="about.html">数据声明</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PetroPulse 石化脉动 · 由 Claude Code 生成</span>
+      <span class="warn">本站行情与统计数据均为演示样例,不构成任何投资建议</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

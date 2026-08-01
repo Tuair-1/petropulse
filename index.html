@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetroPulse 石化脉动 — 石化产业智慧信息平台</title>
+<meta name="description" content="PetroPulse 石化脉动:石化行业市场数据、产业链全景、产品动态与绿色转型一站式信息平台。感知产业脉搏,洞见能源材料未来。">
+<meta property="og:title" content="PetroPulse 石化脉动 — 石化产业智慧信息平台">
+<meta property="og:description" content="感知产业脉搏 · 洞见能源材料未来">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ================= 导航 ================= -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#111c33"/>
+        <defs>
+          <linearGradient id="bg1" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0" stop-color="#f6a821"/><stop offset="1" stop-color="#ff5e3a"/>
+          </linearGradient>
+        </defs>
+        <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="url(#bg1)"/>
+        <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+      </svg>
+      <span>石化脉动<span class="en">PETROPULSE</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="market.html">市场数据</a>
+      <a href="chain.html">产业链</a>
+      <a href="about.html">关于</a>
+      <a class="btn btn-primary nav-cta" href="market.html">进入数据平台</a>
+    </div>
+    <button class="nav-burger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ================= 首屏 Hero ================= -->
+<header class="hero">
+  <div class="hero-bg">
+    <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <style>
+        .flame { transform-box: fill-box; transform-origin: center; animation: flick .18s ease-in-out infinite alternate; }
+        @keyframes flick { from { transform: scale(1) } to { transform: scale(1.14, .82) } }
+        .glow { animation: glowPulse 3.2s ease-in-out infinite; }
+        @keyframes glowPulse { 0%,100% { opacity: .55 } 50% { opacity: .95 } }
+        .smoke { animation: rise 7.5s linear infinite; }
+        @keyframes rise {
+          0%   { transform: translateY(6px) scale(.55); opacity: 0 }
+          12%  { opacity: .5 }
+          100% { transform: translateY(-110px) scale(1.9); opacity: 0 }
+        }
+        .steam { animation: rise2 5s linear infinite; }
+        @keyframes rise2 {
+          0%   { transform: translateY(0) scale(.5); opacity: 0 }
+          15%  { opacity: .4 }
+          100% { transform: translateY(-70px) scale(1.6); opacity: 0 }
+        }
+        .flow-dot { animation: flowX 6s linear infinite; }
+        @keyframes flowX { from { transform: translateX(0); opacity: 0 } 6% { opacity: .9 } 94% { opacity: .9 } to { transform: translateX(940px); opacity: 0 } }
+        .star { animation: tw 1s ease-in-out infinite alternate; }
+        @keyframes tw { to { opacity: .18 } }
+        .moon-halo { animation: halo 5s ease-in-out infinite alternate; }
+        @keyframes halo { to { opacity: .5 } }
+        .heat { animation: heatW 1.4s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom; }
+        @keyframes heatW { from { transform: scaleY(.85) } to { transform: scaleY(1.15) } }
+      </style>
+
+      <defs>
+        <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#070d1f"/><stop offset=".55" stop-color="#0e1830"/>
+          <stop offset=".85" stop-color="#1d2946"/><stop offset="1" stop-color="#28365a"/>
+        </linearGradient>
+        <linearGradient id="groundG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#101a33"/><stop offset="1" stop-color="#070c18"/>
+        </linearGradient>
+        <linearGradient id="steelG" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#3a4a6e"/><stop offset="1" stop-color="#202c48"/>
+        </linearGradient>
+        <linearGradient id="towerG" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#2c3b5e"/><stop offset=".5" stop-color="#43537c"/><stop offset="1" stop-color="#232f4d"/>
+        </linearGradient>
+        <radialGradient id="fireG" cx=".5" cy=".65" r=".6">
+          <stop offset="0" stop-color="#fff3c4"/><stop offset=".35" stop-color="#ffb63d"/>
+          <stop offset=".7" stop-color="#ff5e3a"/><stop offset="1" stop-color="#ff5e3a" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="flareG" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#ffb63d" stop-opacity=".28"/><stop offset="1" stop-color="#ff5e3a" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
+        <filter id="blur16"><feGaussianBlur stdDeviation="16"/></filter>
+      </defs>
+
+      <!-- 天空 -->
+      <rect width="1440" height="800" fill="url(#skyG)"/>
+      <!-- 星空(JS 生成) -->
+      <g id="stars"></g>
+
+      <!-- 月亮 -->
+      <g>
+        <circle class="moon-halo" cx="1175" cy="118" r="110" fill="#ffe9c4" opacity=".14" filter="url(#blur16)"/>
+        <circle cx="1175" cy="118" r="42" fill="#f5eede"/>
+        <circle cx="1161" cy="108" r="8"  fill="#e2d3b4" opacity=".8"/>
+        <circle cx="1184" cy="128" r="6"  fill="#e2d3b4" opacity=".8"/>
+        <circle cx="1170" cy="134" r="4"  fill="#e2d3b4" opacity=".7"/>
+      </g>
+
+      <!-- 远景雾霾 -->
+      <rect y="590" width="1440" height="90" fill="#28365a" opacity=".55" filter="url(#blur16)"/>
+
+      <!-- 远处工厂剪影 -->
+      <g fill="#1a2440" opacity=".7">
+        <rect x="120" y="560" width="260" height="80"/>
+        <rect x="150" y="520" width="34" height="40"/>
+        <rect x="210" y="530" width="24" height="30"/>
+        <rect x="900" y="540" width="300" height="100"/>
+        <rect x="930" y="500" width="30" height="40"/>
+        <rect x="1000" y="480" width="22" height="60"/>
+      </g>
+
+      <!-- ===== 主厂区:管线栈桥 ===== -->
+      <g stroke="rgba(255,255,255,.13)" stroke-width="4" stroke-linecap="round">
+        <line x1="300" y1="566" x2="1290" y2="566"/>
+        <line x1="300" y1="588" x2="1290" y2="588" stroke-width="3"/>
+        <line x1="300" y1="606" x2="1290" y2="606" stroke-width="2.5"/>
+      </g>
+      <!-- 管线流动光点 -->
+      <g>
+        <circle class="flow-dot" cx="300" cy="588" r="3.5" fill="#2dd4f8" style="animation-delay:-1.2s"/>
+        <circle class="flow-dot" cx="300" cy="588" r="3.5" fill="#f6a821" style="animation-delay:-3.6s"/>
+        <circle class="flow-dot" cx="300" cy="588" r="3" fill="#34d399" style="animation-delay:-5s"/>
+      </g>
+      <!-- 栈桥立柱 -->
+      <g stroke="rgba(255,255,255,.1)" stroke-width="2">
+        <g id="rackSupports">
+          <line x1="420" y1="560" x2="420" y2="630"/><line x1="445" y1="560" x2="445" y2="630"/>
+          <line x1="580" y1="560" x2="580" y2="630"/><line x1="605" y1="560" x2="605" y2="630"/>
+          <line x1="740" y1="560" x2="740" y2="630"/><line x1="765" y1="560" x2="765" y2="630"/>
+          <line x1="920" y1="560" x2="920" y2="630"/><line x1="945" y1="560" x2="945" y2="630"/>
+          <line x1="1080" y1="560" x2="1080" y2="630"/><line x1="1105" y1="560" x2="1105" y2="630"/>
+          <line x1="1240" y1="560" x2="1240" y2="630"/><line x1="1265" y1="560" x2="1265" y2="630"/>
+        </g>
+      </g>
+
+      <!-- 球罐 -->
+      <g>
+        <ellipse cx="420" cy="540" rx="84" ry="84" fill="url(#steelG)" stroke="rgba(255,255,255,.16)"/>
+        <ellipse cx="400" cy="505" rx="34" ry="18" fill="rgba(255,255,255,.09)"/>
+        <path d="M350 615 v18 M490 615 v18" stroke="rgba(255,255,255,.25)" stroke-width="7" stroke-linecap="round"/>
+        <rect x="412" y="500" width="16" height="26" fill="rgba(255,255,255,.14)"/>
+        <ellipse cx="565" cy="558" rx="56" ry="56" fill="url(#steelG)" stroke="rgba(255,255,255,.14)"/>
+        <ellipse cx="551" cy="532" rx="22" ry="11" fill="rgba(255,255,255,.08)"/>
+        <path d="M520 614 v16 M610 614 v16" stroke="rgba(255,255,255,.22)" stroke-width="5" stroke-linecap="round"/>
+      </g>
+
+      <!-- 立式储罐 -->
+      <g>
+        <g transform="translate(655 566)">
+          <ellipse cy="0" rx="22" ry="7" fill="#223050"/>
+          <rect y="-74" width="44" height="74" fill="url(#steelG)" stroke="rgba(255,255,255,.14)"/>
+          <ellipse cy="-74" rx="22" ry="7" fill="#31436a" stroke="rgba(255,255,255,.14)"/>
+        </g>
+        <g transform="translate(715 570)">
+          <ellipse cy="0" rx="19" ry="6" fill="#223050"/>
+          <rect y="-64" width="38" height="64" fill="url(#steelG)" stroke="rgba(255,255,255,.13)"/>
+          <ellipse cy="-64" rx="19" ry="6" fill="#31436a" stroke="rgba(255,255,255,.13)"/>
+        </g>
+      </g>
+
+      <!-- 加热炉(带火焰窗) -->
+      <g>
+        <rect x="935" y="596" width="74" height="44" rx="4" fill="#222f4d" stroke="rgba(255,255,255,.16)"/>
+        <rect x="950" y="606" width="44" height="26" rx="3" fill="#0b0f1c"/>
+        <g class="heat">
+          <ellipse cx="962" cy="624" rx="7" ry="10" fill="url(#fireG)"/>
+          <ellipse cx="978" cy="622" rx="6" ry="9" fill="url(#fireG)"/>
+          <ellipse cx="971" cy="617" rx="10" ry="6" fill="#ffb63d" opacity=".8"/>
+        </g>
+      </g>
+
+      <!-- 烟囱 + 烟羽(JS 生成烟圈) -->
+      <g>
+        <rect x="882" y="470" width="17" height="170" fill="#2b3a5d"/>
+        <rect x="878" y="462" width="25" height="10" rx="2" fill="#35476f"/>
+        <g id="smokeChimney"></g>
+      </g>
+
+      <!-- 常压塔 A -->
+      <g>
+        <g transform="translate(1005 250)">
+          <rect x="0" y="18" width="46" height="372" fill="url(#towerG)" stroke="rgba(255,255,255,.18)"/>
+          <rect x="3" y="12" width="40" height="10" rx="2" fill="#43537c"/>
+          <path d="M0 18 h46 M0 44 h46 M0 66 h46 M0 88 h46 M0 110 h46 M0 132 h46 M0 154 h46 M0 176 h46 M0 198 h46 M0 220 h46 M0 242 h46 M0 264 h46 M0 286 h46 M0 308 h46 M0 330 h46 M0 352 h46 M0 374 h46" stroke="rgba(0,0,0,.4)" stroke-width="1.5"/>
+          <rect x="48" y="24" width="5" height="360" fill="rgba(255,255,255,.12)"/>
+          <rect x="18" y="384" width="14" height="8" fill="#35476f"/>
+          <g id="towerALights" class="lights"></g>
+        </g>
+        <!-- 塔顶蒸汽 -->
+        <g id="steamA"></g>
+      </g>
+
+      <!-- 常压塔 B -->
+      <g transform="translate(1190 330)">
+        <rect x="0" y="16" width="34" height="294" fill="url(#towerG)" stroke="rgba(255,255,255,.16)"/>
+        <rect x="2" y="10" width="30" height="9" rx="2" fill="#43537c"/>
+        <path d="M0 16 h34 M0 40 h34 M0 62 h34 M0 84 h34 M0 106 h34 M0 128 h34 M0 150 h34 M0 172 h34 M0 194 h34 M0 216 h34 M0 238 h34 M0 260 h34 M0 282 h34" stroke="rgba(0,0,0,.4)" stroke-width="1.5"/>
+        <rect x="35" y="22" width="4" height="282" fill="rgba(255,255,255,.11)"/>
+        <g id="towerBLights" class="lights"></g>
+      </g>
+
+      <!-- 火炬塔 -->
+      <g>
+        <line x1="1340" y1="620" x2="1340" y2="258" stroke="#2b3a5d" stroke-width="8" stroke-linecap="round"/>
+        <line x1="1316" y1="600" x2="1340" y2="262" stroke="#232f4d" stroke-width="5"/>
+        <line x1="1364" y1="600" x2="1340" y2="262" stroke="#232f4d" stroke-width="5"/>
+        <line x1="1322" y1="420" x2="1358" y2="420" stroke="#232f4d" stroke-width="4"/>
+        <g transform="translate(1340 252)">
+          <circle class="glow" r="30" fill="url(#flareG)" filter="url(#blur6)"/>
+          <ellipse class="flame" cx="0" cy="-6" rx="9" ry="16" fill="url(#fireG)"/>
+          <ellipse class="flame" cx="0" cy="-2" rx="5" ry="8" fill="#fff3c4" style="animation-delay:-.09s"/>
+        </g>
+        <!-- 地面火光反射 -->
+        <ellipse cx="1340" cy="648" rx="120" ry="14" fill="#ff7a2e" opacity=".14" filter="url(#blur16)"/>
+      </g>
+
+      <!-- 塔间连接管线 -->
+      <path d="M1051 250 C 1120 250, 1150 300, 1190 330" stroke="rgba(255,255,255,.14)" stroke-width="5" fill="none"/>
+      <path d="M1051 400 C 980 420, 800 500, 620 558" stroke="rgba(255,255,255,.1)" stroke-width="4" fill="none"/>
+      <path d="M1224 400 C 1280 460, 1300 500, 1330 560" stroke="rgba(255,255,255,.1)" stroke-width="4" fill="none"/>
+
+      <!-- 起重机剪影 -->
+      <g stroke="#1e2a46" stroke-width="5" stroke-linecap="round" fill="none">
+        <line x1="148" y1="640" x2="148" y2="420"/>
+        <line x1="148" y1="428" x2="258" y2="428"/>
+        <line x1="148" y1="428" x2="258" y2="452"/>
+        <line x1="258" y1="428" x2="258" y2="560" stroke-width="2"/>
+        <circle cx="258" cy="562" r="4" fill="#1e2a46" stroke="none"/>
+      </g>
+      <rect x="126" y="440" width="22" height="12" rx="2" fill="#1e2a46"/>
+
+      <!-- 地面 -->
+      <rect y="640" width="1440" height="160" fill="url(#groundG)"/>
+      <rect y="730" width="1440" height="70" fill="#04070f"/>
+      <!-- 围栏 -->
+      <g stroke="rgba(255,255,255,.09)" stroke-width="1.5">
+        <line x1="0" y1="650" x2="1440" y2="650"/>
+        <line x1="0" y1="672" x2="1440" y2="672"/>
+        <g id="fencePosts"></g>
+      </g>
+
+      <!-- 地面光斑(灯光点缀) -->
+      <g id="groundLights"></g>
+    </svg>
+  </div>
+
+  <div class="container hero-content">
+    <span class="hero-badge"><span class="dot"></span>实时行情 · 产业洞察 · 数据驱动</span>
+    <h1>感知石化产业脉搏<br><span class="text-grad">洞见能源材料未来</span></h1>
+    <p class="lead">PetroPulse 石化脉动 — 聚合原油与化工品行情、产业链全景图谱、龙头企业动态与绿色转型路径,
+      以数据视角重新审视全球规模最大的工业体系之一。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="market.html">进入市场数据平台
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn btn-ghost" href="chain.html">查看产业链全景</a>
+    </div>
+  </div>
+  <div class="hero-scroll">SCROLL</div>
+</header>
+
+<!-- ================= 统计条 ================= -->
+<section class="stats-band">
+  <div class="container stats-grid">
+    <div class="stat reveal"><div class="num"><span data-count="15.8" data-suffix="">0</span><span class="suffix">万亿</span></div><div class="lbl">中国石化产业营业收入(2025, 元)</div></div>
+    <div class="stat reveal d1"><div class="num"><span data-count="2.87" data-suffix="">0</span><span class="suffix">万家</span></div><div class="lbl">规模以上石化企业</div></div>
+    <div class="stat reveal d2"><div class="num"><span data-count="7.41" data-suffix="">0</span><span class="suffix">亿吨</span></div><div class="lbl">原油加工量(2025)</div></div>
+    <div class="stat reveal d3"><div class="num"><span data-count="45.6" data-suffix="">0</span><span class="suffix">亿吨</span></div><div class="lbl">化工产品产量(2025)</div></div>
+  </div>
+</section>
+
+<!-- ================= 行情条 ================= -->
+<div class="ticker"><div class="ticker-track" aria-hidden="true"></div></div>
+
+<!-- ================= 市场脉搏 ================= -->
+<section class="block" id="market">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Market Pulse</span>
+      <h2 class="sec-title">市场脉搏 <span class="text-cyan">Market Pulse</span></h2>
+      <p class="sec-sub">原油与大宗化工品核心指标一览。行情数据为演示样例,仅用于界面与交互展示。</p>
+    </div>
+
+    <div class="kpi-row reveal d1">
+      <div class="card kpi">
+        <div class="k"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-3.5 5-6 8-6 11.5A6 6 0 0 0 12 21a6 6 0 0 0 6-5.5C18 11 15.5 8 12 3z"/></svg></span>布伦特原油</div>
+        <div class="v">$59.92<span style="font-size:15px;color:var(--t-3)"> /桶</span></div>
+        <div class="d">周涨 <b>+0.85%</b> · 月涨 +2.1%</div>
+      </div>
+      <div class="card kpi">
+        <div class="k"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 20V9m4 11V6m4 14v-8m4 8V4"/></svg></span>中国炼油产能</div>
+        <div class="v">9.35<span style="font-size:15px;color:var(--t-3)"> 亿吨/年</span></div>
+        <div class="d">全球第一 · 利用率 <b>79.2%</b></div>
+      </div>
+      <div class="card kpi">
+        <div class="k"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18l5-6 4 3 7-9M20 6h-4m0 0v4"/></svg></span>乙烯产能</div>
+        <div class="v">48.8<span style="font-size:15px;color:var(--t-3)"> Mt/年</span></div>
+        <div class="d">占全球 <b>32.5%</b> · 开工率 76%</div>
+      </div>
+      <div class="card kpi">
+        <div class="k"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M2 12h4m12 0h4M5 5l3 3m8 8l3 3M19 5l-3 3M8 16l-3 3"/></svg></span>石化景气指数</div>
+        <div class="v">62.4</div>
+        <div class="d">扩张区间(<b>&gt;50</b>) · 环比 +3.2</div>
+      </div>
+    </div>
+
+    <div class="panel reveal d2" style="margin-top:22px">
+      <div class="chart-head">
+        <div>
+          <h3>核心品种价格走势</h3>
+          <div class="tag">2024.01 — 2026.07 · 月均 · 演示数据</div>
+        </div>
+        <div class="pills" id="priceTabs">
+          <button class="pill on" data-key="oil">原油</button>
+          <button class="pill" data-key="olefin">烯烃</button>
+          <button class="pill" data-key="aro">芳烃</button>
+        </div>
+      </div>
+      <div id="overviewChart" class="chart" style="height:400px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 产业链预览 ================= -->
+<section class="block" id="chain-preview" style="padding-top:20px">
+  <div class="container">
+    <div class="sec-head reveal" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px">
+      <div>
+        <span class="eyebrow">Value Chain</span>
+        <h2 class="sec-title">产业链全景</h2>
+        <p class="sec-sub">从原油开采到终端消费品,石化工业构成了一条纵贯能源与材料的巨型价值链。</p>
+      </div>
+      <a class="btn btn-ghost" href="chain.html">进入互动产业链
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="panel reveal d1" style="padding:34px 20px">
+      <svg viewBox="0 0 1200 190" style="width:100%;height:auto" aria-hidden="true">
+        <defs>
+          <linearGradient id="flowA" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#f6a821"/><stop offset="1" stop-color="#ff5e3a"/>
+          </linearGradient>
+          <style>
+            .dash-flow { stroke-dasharray: 7 9; animation: dashMove 1.6s linear infinite; }
+            @keyframes dashMove { to { stroke-dashoffset: -16; } }
+            .chain-prev-node { transition: transform .2s; transform-box: fill-box; transform-origin: center; }
+            .chain-prev-node:hover { transform: scale(1.06); }
+          </style>
+        </defs>
+        <g font-family="'PingFang SC','Microsoft YaHei',sans-serif" text-anchor="middle">
+          <g class="chain-prev-node" transform="translate(120 95)">
+            <rect x="-74" y="-34" width="148" height="68" rx="14" fill="#101b30" stroke="rgba(246,168,33,.45)" stroke-width="1.5"/>
+            <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">原油 · 天然气 · 煤</text>
+            <text y="16" fill="#6b7893" font-size="11">原料资源</text>
+          </g>
+          <g class="chain-prev-node" transform="translate(360 95)">
+            <rect x="-86" y="-34" width="172" height="68" rx="14" fill="#101b30" stroke="rgba(45,212,248,.5)" stroke-width="1.5"/>
+            <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">炼油 · 蒸汽裂解</text>
+            <text y="16" fill="#6b7893" font-size="11">加工转化</text>
+          </g>
+          <g class="chain-prev-node" transform="translate(600 95)">
+            <rect x="-86" y="-34" width="172" height="68" rx="14" fill="#101b30" stroke="rgba(52,211,153,.5)" stroke-width="1.5"/>
+            <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">烯烃 · 芳烃 · 合成气</text>
+            <text y="16" fill="#6b7893" font-size="11">基础化工品</text>
+          </g>
+          <g class="chain-prev-node" transform="translate(840 95)">
+            <rect x="-86" y="-34" width="172" height="68" rx="14" fill="#101b30" stroke="rgba(248,113,113,.45)" stroke-width="1.5"/>
+            <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">合成材料 · 化学制品</text>
+            <text y="16" fill="#6b7893" font-size="11">下游制造</text>
+          </g>
+          <g class="chain-prev-node" transform="translate(1080 95)">
+            <rect x="-76" y="-34" width="152" height="68" rx="14" fill="#101b30" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>
+            <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">终端应用</text>
+            <text y="16" fill="#6b7893" font-size="11">包装 · 汽车 · 纺织 · 电子</text>
+          </g>
+          <g stroke="url(#flowA)" stroke-width="3" fill="none" opacity=".9">
+            <line class="dash-flow" x1="196" y1="88" x2="270" y2="88"/>
+            <line class="dash-flow" x1="196" y1="102" x2="270" y2="102"/>
+            <line class="dash-flow" x1="450" y1="88" x2="508" y2="88" style="animation-delay:-.4s"/>
+            <line class="dash-flow" x1="450" y1="102" x2="508" y2="102" style="animation-delay:-.4s"/>
+            <line class="dash-flow" x1="690" y1="88" x2="748" y2="88" style="animation-delay:-.8s"/>
+            <line class="dash-flow" x1="690" y1="102" x2="748" y2="102" style="animation-delay:-.8s"/>
+            <line class="dash-flow" x1="930" y1="88" x2="998" y2="88" style="animation-delay:-1.2s"/>
+            <line class="dash-flow" x1="930" y1="102" x2="998" y2="102" style="animation-delay:-1.2s"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 产品中心 ================= -->
+<section class="block" id="products">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Product Center</span>
+      <h2 class="sec-title">核心产品</h2>
+      <p class="sec-sub">覆盖烯烃、芳烃与合成材料三大板块的石化核心品种。数据为 2025 年行业估算值(示意)。</p>
+    </div>
+    <div class="prod-grid">
+      <article class="card prod reveal d1">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="17" r="2.4"/><circle cx="12" cy="8" r="2.4"/><circle cx="18" cy="17" r="2.4"/><path d="M8.2 15.4 10.4 10.4m5.2 5-2.2-5"/></svg></div>
+        <h3>乙烯</h3><div class="en">Ethylene C₂H₄</div>
+        <p>三大合成材料之母,经聚合制聚乙烯,亦制乙二醇、苯乙烯、环氧乙烷。</p>
+        <div class="meta"><span>产能 <b>48.8</b> Mt/a</span><span>开工率 <b>76.2%</b></span></div>
+      </article>
+      <article class="card prod reveal d2">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M6.8 17.5 17.2 6.5M12 12v2m0-6v2"/></svg></div>
+        <h3>丙烯</h3><div class="en">Propylene C₃H₆</div>
+        <p>聚丙烯(PP)直接原料,亦用于丙烯腈、环氧丙烷与羰基合成醇类。</p>
+        <div class="meta"><span>产能 <b>52.6</b> Mt/a</span><span>开工率 <b>78.5%</b></span></div>
+      </article>
+      <article class="card prod reveal d3">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M12 3c2.5 2.5 3 4.5 3 6.5A3 3 0 0 1 12 12.5 3 3 0 0 1 9 9.5c0-2 .5-4 3-6.5z"/><path d="M9 11.5a6 6 0 0 0 6 0M12 13v6"/></svg></div>
+        <h3>苯</h3><div class="en">Benzene C₆H₆</div>
+        <p>芳烃之基,用于苯乙烯、苯酚、己内酰胺、硝基苯等大宗衍生物。</p>
+        <div class="meta"><span>产能 <b>26.4</b> Mt/a</span><span>开工率 <b>72.8%</b></span></div>
+      </article>
+      <article class="card prod reveal d4">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 8h8M8 12h5"/></svg></div>
+        <h3>对二甲苯</h3><div class="en">Paraxylene C₈H₁₀</div>
+        <p>PTA 之母,终端通向聚酯纤维与 PET 瓶片,织造工业的咽喉品种。</p>
+        <div class="meta"><span>产能 <b>46.2</b> Mt/a</span><span>开工率 <b>81.3%</b></span></div>
+      </article>
+      <article class="card prod reveal d1">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M4 19c1.5-3 2.5-6 8-6s6.5 3 8 6M4 13c1.5-3 2.5-5.5 8-5.5S18.5 10 20 13M6 9c0-3 2.5-5 6-5s6 2 6 5"/></svg></div>
+        <h3>甲醇</h3><div class="en">Methanol CH₃OH</div>
+        <p>煤制烯烃(MTO)主原料,亦制甲醛、醋酸、MTBE,兼作清洁燃料。</p>
+        <div class="meta"><span>产能 <b>109.6</b> Mt/a</span><span>开工率 <b>74.1%</b></span></div>
+      </article>
+      <article class="card prod reveal d2">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M12 4c-2 2-4 3.5-4 6a4 4 0 0 0 8 0c0-2.5-2-4-4-6z"/><path d="M5 20c3-2 5-2 7-2s4 0 7 2"/></svg></div>
+        <h3>聚乙烯</h3><div class="en">Polyethylene PE</div>
+        <p>全球用量最大的塑料,薄膜、管材、中空容器与线缆绝缘层。</p>
+        <div class="meta"><span>产能 <b>42.5</b> Mt/a</span><span>开工率 <b>77.9%</b></span></div>
+      </article>
+      <article class="card prod reveal d3">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M12 4c2.5 1.5 3.5 3.5 3.5 5.5 0 1.2-.6 2.2-1.4 3M12 4C9.5 5.5 8.5 7.5 8.5 9.5c0 1.2.6 2.2 1.4 3M9.5 12.5h5"/><path d="M5 20c3-2 5-2 7-2s4 0 7 2"/></svg></div>
+        <h3>聚丙烯</h3><div class="en">Polypropylene PP</div>
+        <p>纤维、注塑、无纺布之基,口罩熔喷布、汽车保险杠的关键材料。</p>
+        <div class="meta"><span>产能 <b>36.8</b> Mt/a</span><span>开工率 <b>79.6%</b></span></div>
+      </article>
+      <article class="card prod reveal d4">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M12 3c-2 3-5 4.5-5 8a5 5 0 0 0 10 0c0-3.5-3-5-5-8z"/><circle cx="12" cy="11" r="1.4"/></svg></div>
+        <h3>尿素</h3><div class="en">Urea CO(NH₂)₂</div>
+        <p>全球最大氮肥品种,亦用于车用尿素(SCR)与脲醛树脂。</p>
+        <div class="meta"><span>产能 <b>62.4</b> Mt/a</span><span>开工率 <b>68.4%</b></span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 行业领军 ================= -->
+<section class="block" id="companies" style="padding-top:20px">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Leaders</span>
+      <h2 class="sec-title">行业领军企业</h2>
+      <p class="sec-sub">从央企巨头到民营炼化新贵,石化行业的竞争格局正在被重新书写。</p>
+    </div>
+    <div class="co-grid">
+      <div class="card co reveal d1"><span class="logo">中</span><div><h4>中国石化</h4><span>SINOPEC · 炼化一体化龙头</span></div></div>
+      <div class="card co reveal d2"><span class="logo">油</span><div><h4>中国石油</h4><span>PetroChina · 上游+炼化全能</span></div></div>
+      <div class="card co reveal d3"><span class="logo">海</span><div><h4>中国海油</h4><span>CNOOC · 海上油气巨头</span></div></div>
+      <div class="card co reveal d4"><span class="logo">恒</span><div><h4>恒力石化</h4><span>Hengli · 民营炼化标杆</span></div></div>
+      <div class="card co reveal d1"><span class="logo">荣</span><div><h4>荣盛石化</h4><span>Rongsheng · 聚酯产业链龙头</span></div></div>
+      <div class="card co reveal d2"><span class="logo">万</span><div><h4>万华化学</h4><span>Wanhua · 化工新材料典范</span></div></div>
+      <div class="card co reveal d3"><span class="logo">卫</span><div><h4>卫星化学</h4><span>Satellite · C3产业链领先</span></div></div>
+      <div class="card co reveal d4"><span class="logo">盛</span><div><h4>东方盛虹</h4><span>Eastern Shenghong · 炼化新秀</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 绿色石化 ================= -->
+<section class="block" id="green">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Green Transition</span>
+      <h2 class="sec-title">绿色转型 · 双碳之路</h2>
+      <p class="sec-sub">节能降碳、氢能与碳捕集正在重塑石化工业的长期竞争力。</p>
+    </div>
+    <div class="sus-wrap">
+      <div class="panel reveal d1">
+        <div class="meter">
+          <div class="top"><span>炼油综合能耗(较 2020 年)</span><b>↓ 8.6%</b></div>
+          <div class="bar"><i data-w="86%"></i></div>
+        </div>
+        <div class="meter">
+          <div class="top"><span>清洁能源占比(绿电/绿氢)</span><b>12.4%</b></div>
+          <div class="bar"><i data-w="62%"></i></div>
+        </div>
+        <div class="meter">
+          <div class="top"><span>CCUS 碳捕集能力(目标 2030)</span><b>400 万吨/年</b></div>
+          <div class="bar"><i class="amber" data-w="80%"></i></div>
+        </div>
+        <div class="meter">
+          <div class="top"><span>绿氢产能(目标 2030)</span><b>23 万吨/年</b></div>
+          <div class="bar"><i data-w="58%"></i></div>
+        </div>
+      </div>
+      <div class="reveal d2">
+        <ul class="tl">
+          <li><span class="t">2021—2025</span><h4>十四五 · 制度奠基</h4><p>双碳「1+N」政策体系落地,能效领跑者行动推行,落后产能加速出清。</p></li>
+          <li><span class="t">2030</span><h4>碳达峰 · 结构优化</h4><p>炼化产能利用率提升至 85%+,CCUS 与绿氢规模化示范,油转化率显著提高。</p></li>
+          <li><span class="t">2035</span><h4>绿色制造 · 全面建立</h4><p>绿色工厂与循环经济体系全面覆盖,化工产品碳足迹可追溯。</p></li>
+          <li><span class="t">2060</span><h4>碳中和 · 净零排放</h4><p>石化工业实现近零排放,原料多元化与回收再生形成闭环。</p></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 动态洞察 ================= -->
+<section class="block" id="news" style="padding-top:10px">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Insights</span>
+      <h2 class="sec-title">动态洞察</h2>
+    </div>
+    <div class="news-grid">
+      <article class="card news reveal d1">
+        <div class="date">2026 · 07 · 28</div>
+        <h3>供需博弈加剧,国际油价三季度走势前瞻</h3>
+        <p>OPEC+ 增产节奏与全球需求预期反复拉锯,布伦特在 55—65 美元区间宽幅震荡,化工品价差修复成为市场主线。</p>
+        <a class="more" href="market.html">了解更多 →</a>
+      </article>
+      <article class="card news reveal d2">
+        <div class="date">2026 · 07 · 15</div>
+        <h3>国内首套百万吨级「油转化」项目满负荷运行</h3>
+        <p>原油直接制化学品工艺实现重大突破,化工品收率超 60%,炼化转型从「减油增化」走向「原油直化」。</p>
+        <a class="more" href="chain.html">了解更多 →</a>
+      </article>
+      <article class="card news reveal d3">
+        <div class="date">2026 · 06 · 30</div>
+        <h3>石化行业纳入全国碳市场扩围,碳管理进入新阶段</h3>
+        <p>碳排放配额分配方案落地,重点炼化企业开启碳预算管理,低碳工艺与碳捕集项目进入集中投产期。</p>
+        <a class="more" href="about.html">了解更多 →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 页脚 ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:6px">
+          <svg viewBox="0 0 64 64" width="28" height="28" fill="none" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#111c33"/>
+            <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+            <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+          </svg>
+          <span>石化脉动<span class="en">PETROPULSE</span></span>
+        </a>
+        <p class="desc">以数据视角感知石化产业脉搏 —— 行情、产业链、企业动态与绿色转型,一站尽览。</p>
+      </div>
+      <div>
+        <h5>快速导航</h5>
+        <ul>
+          <li><a href="index.html">首页</a></li>
+          <li><a href="market.html">市场数据</a></li>
+          <li><a href="chain.html">产业链</a></li>
+          <li><a href="about.html">关于本站</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>数据平台</h5>
+        <ul>
+          <li><a href="market.html">原油价格走势</a></li>
+          <li><a href="market.html">化工品价格对比</a></li>
+          <li><a href="market.html">产能与贸易结构</a></li>
+          <li><a href="chain.html">产业链图谱</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>关于本站</h5>
+        <ul>
+          <li><a href="about.html">项目缘起</a></li>
+          <li><a href="about.html">技术架构</a></li>
+          <li><a href="about.html">数据声明</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PetroPulse 石化脉动 · 由 Claude Code 生成</span>
+      <span class="warn">本站行情与统计数据均为演示样例,不构成任何投资建议</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/echarts.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+/* ---------- 首屏夜景生成(星空 / 灯光 / 烟羽) ---------- */
+(function () {
+  const rnd = PP.mulberry32(20260801);
+  const svg = document.querySelector('.hero-bg svg');
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(n);
+    return n;
+  };
+
+  /* 星空 */
+  const stars = document.getElementById('stars');
+  for (let i = 0; i < 54; i++) {
+    el('circle', {
+      cx: rnd() * 1440, cy: rnd() * 560, r: 0.6 + rnd() * 1.5,
+      fill: rnd() > 0.82 ? '#ffe9c4' : '#dce6ff',
+      opacity: (0.35 + rnd() * 0.65).toFixed(2),
+      class: 'star',
+      style: `animation-delay:${(rnd() * 1.2).toFixed(2)}s;animation-duration:${(0.7 + rnd() * 1.4).toFixed(2)}s`
+    }, stars);
+  }
+
+  /* 塔身巡检灯 */
+  const mkLights = (gid, count, cx, y0, step) => {
+    const g = document.getElementById(gid);
+    for (let i = 0; i < count; i++) {
+      el('circle', {
+        cx: cx + (rnd() - 0.5) * 10, cy: y0 + i * step, r: 2.2,
+        fill: rnd() > 0.5 ? '#ffd98a' : '#9fb6ff', opacity: .85, class: 'star',
+        style: `animation-duration:${(1.6 + rnd() * 2.4).toFixed(2)}s;animation-delay:${(rnd() * 3).toFixed(2)}s`
+      }, g);
+    }
+  };
+  mkLights('towerALights', 7, 20, 40, 52);
+  mkLights('towerBLights', 6, 15, 44, 46);
+
+  /* 烟羽 */
+  const mkSmoke = (gid, x, y, n, spread) => {
+    const g = document.getElementById(gid);
+    for (let i = 0; i < n; i++) {
+      el('circle', {
+        cx: x + (rnd() - 0.5) * spread, cy: y, r: 5 + rnd() * 7,
+        fill: 'rgba(180,196,230,.16)', class: 'smoke',
+        style: `animation-delay:${(rnd() * 7).toFixed(2)}s;animation-duration:${(6 + rnd() * 4).toFixed(2)}s`
+      }, g);
+    }
+  };
+  mkSmoke('smokeChimney', 890, 452, 6, 8);
+  mkSmoke('steamA', 1030, 240, 5, 14);
+
+  /* 围栏立柱 + 地面灯 */
+  const fp = document.getElementById('fencePosts');
+  for (let x = 0; x <= 1440; x += 24) el('line', { x1: x, y1: 640, x2: x, y2: 676 }, fp);
+  const gl = document.getElementById('groundLights');
+  for (let i = 0; i < 12; i++) {
+    el('ellipse', {
+      cx: rnd() * 1440, cy: 690 + rnd() * 40, rx: 6 + rnd() * 10, ry: 2.4,
+      fill: rnd() > 0.5 ? 'rgba(246,168,33,.3)' : 'rgba(120,160,255,.22)'
+    }, gl);
+  }
+})();
+
+/* ---------- 首页价格走势图 ---------- */
+(function () {
+  const labels = PP.monthLabels(2024, 1, 31);
+  const DATA = {
+    oil: {
+      series: [
+        { name: '布伦特', color: '#f6a821', data: [79.4,83.2,85.7,89.2,82.3,81.9,84.8,80.1,74.5,75.6,72.9,73.8,76.9,75.4,71.2,66.8,62.4,67.1,69.8,66.2,63.9,61.4,64.2,63.1,65.8,68.4,66.9,63.5,60.8,58.6,59.9] },
+        { name: 'WTI', color: '#2dd4f8', data: [74.1,78.2,80.6,84.0,77.4,77.0,79.9,75.3,70.2,71.1,68.4,69.2,72.0,70.6,66.4,62.1,58.2,62.8,65.3,61.7,59.5,57.0,59.9,58.8,61.2,63.9,62.4,59.0,56.5,54.4,56.7] }
+      ],
+      unit: '美元/桶'
+    },
+    olefin: {
+      series: [
+        { name: '乙烯', color: '#f6a821', data: [880,910,935,970,940,920,950,930,860,875,845,850,890,905,870,830,800,820,840,810,785,770,795,780,810,835,820,795,770,755,765] },
+        { name: '丙烯', color: '#2dd4f8', data: [745,768,790,815,802,788,810,795,742,752,730,738,772,786,758,726,702,716,730,708,688,676,698,685,706,724,712,690,672,660,668] },
+        { name: '丁二烯', color: '#34d399', data: [1050,1080,1120,1150,1090,1060,1100,1020,960,980,940,955,1010,1035,980,920,880,905,935,890,850,830,860,845,875,900,885,852,828,812,830] }
+      ],
+      unit: '美元/吨'
+    },
+    aro: {
+      series: [
+        { name: '苯', color: '#f6a821', data: [720,750,778,805,788,772,798,762,710,725,698,706,742,758,730,695,668,685,700,672,650,638,660,648,672,695,680,652,630,618,628] },
+        { name: '甲苯', color: '#2dd4f8', data: [665,690,712,738,720,706,730,698,655,668,645,652,682,696,670,640,618,632,648,622,602,590,612,600,622,642,630,606,586,575,584] },
+        { name: '对二甲苯', color: '#34d399', data: [862,890,918,948,930,910,938,898,852,868,840,848,885,900,872,838,812,830,850,822,800,786,810,798,822,846,832,805,782,768,780] }
+      ],
+      unit: '美元/吨'
+    }
+  };
+
+  const chart = echarts.init(document.getElementById('overviewChart'));
+  const paint = key => {
+    const d = DATA[key];
+    chart.setOption({
+      ...PP_CHART_THEME,
+      animationDuration: 700,
+      tooltip: { ...PP_CHART_THEME.tooltip, valueFormatter: v => v + ' ' + d.unit },
+      legend: { ...PP_CHART_THEME.legend },
+      grid: { ...PP_CHART_THEME.grid },
+      xAxis: { ...PP_CHART_THEME.xAxis, data: labels, boundaryGap: false },
+      yAxis: { ...PP_CHART_THEME.yAxis, name: d.unit, nameTextStyle: { color: '#6b7893' } },
+      series: d.series.map(s => ({
+        name: s.name, type: 'line', smooth: true, symbol: 'none',
+        data: s.data,
+        lineStyle: { width: 2.5, color: s.color },
+        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: s.color + '38' }, { offset: 1, color: s.color + '00' }
+        ]) },
+        emphasis: { focus: 'series' }
+      }))
+    }, true);
+  };
+  paint('oil');
+  document.getElementById('priceTabs').addEventListener('click', e => {
+    const btn = e.target.closest('.pill');
+    if (!btn) return;
+    document.querySelectorAll('#priceTabs .pill').forEach(p => p.classList.remove('on'));
+    btn.classList.add('on');
+    paint(btn.dataset.key);
+  });
+  window.addEventListener('resize', () => chart.resize());
+})();
+</script>
+</body>
+</html>
