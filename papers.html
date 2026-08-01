@@ -253,9 +253,9 @@
     }, 1000);
     try {
       await PP_AI.chatStream(
-        [{ role: 'system', content: SYS }, { role: 'user', content: `以下是我的论文内容,请诊断:\n\n${text.slice(0, 8000)}` }],
+        [{ role: 'system', content: SYS }, { role: 'user', content: `以下是我的论文内容,请诊断:\n\n${text.slice(0, 16000)}` }],
         {
-          maxTokens: 6000,
+          maxTokens: 16000,
           onReasoning: d => { reasoningBuf += d; thinking.textContent = reasoningBuf.slice(-1500); thinking.scrollTop = thinking.scrollHeight; },
           onDelta: d => {
             clearInterval(thinkTimer);
