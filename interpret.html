@@ -275,7 +275,34 @@
         all.push({ role: 'user', content: `继续解读论文 第${ci + 2}/${chunks.length} 块:\n${chunks[ci + 1] || ''}` });
         if (ci === chunks.length - 1) all.pop();
       }
-      report.innerHTML = renderMD(contentBuf);
+
+      /* ===== 最终整合:基于论文全文生成统一报告 =====
+         分块分析时各块上下文隔离,后文引用的信息前文未看到,易产生偏差。
+         此处将全文重新交给 AI,要求交叉引用、统一结构、纠正遗漏。 */
+      progTxt.textContent = '分块解读完成,正在整合全文…';
+      progPct.textContent = '整合中';
+      report.innerHTML = '<p style="color:var(--t-3);text-align:center;padding:60px 0">🔄 分块解读完成,正在基于<b>全文</b>整合生成最终报告(交叉引用前后文,纠正遗漏)…</p>';
+      const SYS_FINAL = SYS + `
+
+【整合要求】
+现在你已看完全文。请基于论文全文,输出一份整合后的完整解读报告,要求:
+1. 报告结构统一(按上面的六节结构),不再按"第几块"分段;
+2. 全文交叉引用:后文提到的概念、数据、结论要与前文呼应,不要孤立判断;
+3. 纠正分块解读中的遗漏或相互矛盾之处;
+4. 核心知识点部分覆盖全文出现的全部关键概念。`;
+      let finalBuf = '';
+      await PP_AI.chatStream(
+        [{ role: 'system', content: SYS_FINAL }, { role: 'user', content: `以下是该论文的完整原文,请整合输出最终解读报告:\n\n${parsedText.slice(0, 60000)}` }],
+        {
+          maxTokens: 16000,
+          onReasoning: d => { reasoningBuf += d; thinking.textContent = reasoningBuf.slice(-1200); thinking.scrollTop = thinking.scrollHeight; },
+          onDelta: d => {
+            finalBuf += d;
+            report.innerHTML = renderMD(finalBuf) + '<p style="color:var(--t-3)">▍</p>';
+          }
+        }
+      );
+      report.innerHTML = renderMD(finalBuf);
       progress.style.display = 'none';
       thinking.classList.remove('on');
     } catch (e) {
