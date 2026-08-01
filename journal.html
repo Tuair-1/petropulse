@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学报洞察 — PetroPulse 石化脉动</title>
+<meta name="description" content="实时爬取石化领域专业学报论文,AI 自动解读与分类(陆上/海上 × 浅层/深层),洞察学术前沿。">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .jq-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0 6px; }
+  @media (max-width: 980px) { .jq-grid { grid-template-columns: 1fr; } }
+  .jq-card { padding: 20px 22px; }
+  .jq-card .t { font-size: 12px; letter-spacing: .16em; color: var(--cyan); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .jq-card p { font-size: 13.5px; color: var(--t-2); line-height: 1.75; }
+  .jq-card.hot .t { color: var(--amber); }
+  .filter-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 22px 0 18px; }
+  .filter-bar .count { font-size: 12.5px; color: var(--t-3); }
+  .art-card { padding: 22px 24px; margin-bottom: 14px; }
+  .art-card .at { font-size: 15.5px; font-weight: 700; line-height: 1.5; transition: color .2s; }
+  .art-card:hover .at { color: var(--amber); }
+  .art-card .aa { font-size: 12.5px; color: var(--t-3); margin-top: 6px; }
+  .art-card .ab { font-size: 13px; color: var(--t-2); margin-top: 12px; line-height: 1.75; background: rgba(255,255,255,.025); border-left: 2px solid rgba(246,168,33,.4); padding: 10px 14px; border-radius: 0 8px 8px 0; }
+  .art-card .ab .lab { color: var(--amber); font-weight: 600; margin-right: 6px; }
+  .art-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+  .art-meta .chip { font-size: 11.5px; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.04); border: 1px solid var(--line); color: var(--t-2); }
+  .art-meta .chip.loc-off { border-color: rgba(45,212,248,.4); color: var(--cyan); background: rgba(45,212,248,.08); }
+  .art-meta .chip.loc-on { border-color: rgba(246,168,33,.4); color: var(--amber); background: rgba(246,168,33,.08); }
+  .art-meta .chip.dep-deep { border-color: rgba(192,132,252,.4); color: #c084fc; background: rgba(192,132,252,.08); }
+  .art-meta .chip.dep-shallow { border-color: rgba(52,211,153,.4); color: var(--up); background: rgba(52,211,153,.08); }
+  .art-meta .src { margin-left: auto; font-size: 11.5px; color: var(--t-3); }
+  .art-meta a.doi { color: var(--cyan); font-size: 11.5px; }
+  .empty-tip { text-align: center; color: var(--t-3); padding: 60px 0; }
+  .loading { text-align: center; padding: 80px 0; color: var(--t-2); }
+  .loading .ring { width: 34px; height: 34px; border: 3px solid rgba(246,168,33,.2); border-top-color: var(--amber); border-radius: 50%; margin: 0 auto 14px; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ================= 导航 ================= -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#111c33"/>
+        <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+        <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+      </svg>
+      <span>石化脉动<span class="en">PETROPULSE</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="market.html">市场数据</a>
+      <a href="chain.html">产业链</a>
+      <a href="journal.html">学报洞察</a>
+      <a href="about.html">关于</a>
+      <a class="btn btn-primary nav-cta" href="market.html">进入数据平台</a>
+    </div>
+    <button class="nav-burger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ================= 页首 ================= -->
+<header class="page-hero">
+  <div class="container">
+    <div class="crumbs">HOME / <b>JOURNAL INSIGHTS</b></div>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <span class="eyebrow" style="text-transform:none">学术前沿 · AI 洞察</span>
+      <span class="tag" style="font-size:12px;color:var(--t-3);border:1px solid var(--line);padding:3px 10px;border-radius:999px">每日自动爬取 + DeepSeek V4 Flash[1M] 分析</span>
+    </div>
+    <h1>学报洞察</h1>
+    <p class="sec-sub" style="margin-top:14px">实时爬取石化领域专业学报的最新论文,由 AI 自动生成导读、标注研究领域,并按 <b class="hl">陆上/海上 × 浅层/深层</b> 四维分类,洞察学术前沿。</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px">
+      <a class="btn btn-primary" href="interpret.html">📄 专业论文解读(Word / PDF)</a>
+      <a class="btn btn-ghost" href="papers.html">🎓 大学生论文诊断</a>
+    </div>
+  </div>
+</header>
+
+<section class="block" style="padding-top:10px">
+  <div class="container">
+    <div id="loading" class="loading"><div class="ring"></div>正在加载学报数据…</div>
+    <div id="main" style="display:none">
+
+      <!-- AI 洞察 -->
+      <div class="jq-grid" id="insightBox"></div>
+
+      <!-- 筛选栏 -->
+      <div class="filter-bar">
+        <div class="pills" id="quadrantPills">
+          <button class="pill on" data-f="all">全部</button>
+          <button class="pill" data-f="on-shallow">陆上 · 浅层</button>
+          <button class="pill" data-f="on-deep">陆上 · 深层</button>
+          <button class="pill" data-f="off-shallow">海上 · 浅层</button>
+          <button class="pill" data-f="off-deep">海上 · 深层</button>
+        </div>
+        <span class="count" id="count"></span>
+      </div>
+
+      <!-- 论文列表 -->
+      <div id="artList"></div>
+      <div id="empty" class="empty-tip" style="display:none">当前筛选下暂无论文。</div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= 页脚 ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:6px">
+          <svg viewBox="0 0 64 64" width="28" height="28" fill="none" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#111c33"/>
+            <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+            <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+          </svg>
+          <span>石化脉动<span class="en">PETROPULSE</span></span>
+        </a>
+        <p class="desc">以数据视角感知石化产业脉搏 —— 行情、产业链、企业动态与绿色转型,一站尽览。</p>
+      </div>
+      <div><h5>快速导航</h5><ul><li><a href="index.html">首页</a></li><li><a href="market.html">市场数据</a></li><li><a href="chain.html">产业链</a></li><li><a href="journal.html">学报洞察</a></li><li><a href="about.html">关于本站</a></li></ul></div>
+      <div><h5>数据平台</h5><ul><li><a href="market.html">原油价格走势</a></li><li><a href="market.html">化工品价格对比</a></li><li><a href="market.html">产能与贸易结构</a></li><li><a href="chain.html">产业链图谱</a></li></ul></div>
+      <div><h5>AI 工具</h5><ul><li><a href="journal.html">学报洞察</a></li><li><a href="interpret.html">论文解读(Word/PDF)</a></li><li><a href="papers.html">大学生论文诊断</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PetroPulse 石化脉动 · 由 Claude Code 生成</span>
+      <span class="warn">论文数据来自期刊官网公开页面,AI 分析仅供学习参考</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  const LOC = { onshore: '陆上', offshore: '海上', both: '陆海兼涉', na: '' };
+  const DEP = { shallow: '浅层', deep: '深层', na: '' };
+  let articles = [];
+
+  /* 加载 journal.json */
+  async function load() {
+    try {
+      const r = await fetch('data/journal.json?t=' + Date.now(), { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      if (!j.articles || !j.articles.length) throw new Error('empty');
+      articles = j.articles;
+      renderInsights(j.insights);
+      renderSources(j.sources);
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
+      applyFilter('all');
+    } catch (e) {
+      document.getElementById('loading').innerHTML = '<p>学报数据暂不可用(爬取任务可能尚未运行)。<br><a href="about.html" style="color:var(--cyan)">了解机制</a></p>';
+    }
+  }
+
+  function renderInsights(ins) {
+    if (!ins) return;
+    document.getElementById('insightBox').innerHTML = `
+      <div class="card jq-card hot">
+        <div class="t">🔥 本期研究热点</div>
+        <p>${(ins.hotspots || []).map(h => `· ${h}`).join('<br>') || '—'}</p>
+      </div>
+      <div class="card jq-card">
+        <div class="t">📝 学术动态点评</div>
+        <p>${ins.overview || '—'}</p>
+      </div>
+      <div class="card jq-card">
+        <div class="t">⭐ 本期亮点论文</div>
+        <p>${ins.highlight || '—'}</p>
+      </div>`;
+  }
+
+  function renderSources(sources) {
+    const box = document.getElementById('insightBox');
+    const srcLine = (sources || []).map(s => `<span class="chip" style="font-size:11px">${s.name} · ${s.count}篇</span>`).join('');
+    if (srcLine) box.insertAdjacentHTML('beforeend', `<div style="grid-column:1/-1;font-size:12px;color:var(--t-3)">数据源:${srcLine}<span style="float:right">AI 模型:DeepSeek V4 Flash[1M]</span></div>`);
+  }
+
+  function matchFilter(art, f) {
+    const ai = art.ai || {};
+    const loc = ai.location || 'na';
+    const dep = ai.depth || 'na';
+    switch (f) {
+      case 'all': return true;
+      case 'on-shallow': return (loc === 'onshore' || loc === 'both') && (dep === 'shallow' || dep === 'na') && loc !== 'offshore';
+      case 'on-deep': return (loc === 'onshore' || loc === 'both') && (dep === 'deep' || dep === 'na') && loc !== 'offshore';
+      case 'off-shallow': return (loc === 'offshore' || loc === 'both') && (dep === 'shallow' || dep === 'na') && loc !== 'onshore';
+      case 'off-deep': return (loc === 'offshore' || loc === 'both') && (dep === 'deep' || dep === 'na') && loc !== 'onshore';
+      default: return true;
+    }
+  }
+
+  function applyFilter(f) {
+    const list = articles.filter(a => matchFilter(a, f));
+    document.getElementById('count').textContent = `共 ${list.length} 篇`;
+    document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+    document.getElementById('artList').innerHTML = list.map(card).join('');
+  }
+
+  function card(a) {
+    const ai = a.ai || {};
+    const locTxt = LOC[ai.location] || '';
+    const depTxt = DEP[ai.depth] || '';
+    const locCls = ai.location === 'offshore' ? 'loc-off' : (ai.location === 'onshore' ? 'loc-on' : '');
+    const depCls = ai.depth === 'deep' ? 'dep-deep' : (ai.depth === 'shallow' ? 'dep-shallow' : '');
+    return `
+      <article class="card art-card clickable" style="cursor:default">
+        <div class="at"><a href="${a.url}" target="_blank" rel="noopener">${a.title}</a></div>
+        <div class="aa">${(a.authors || []).join('、') || '佚名'}${a.year ? ' · ' + a.year : ''}${a.issue ? ' · 第' + a.issue + '期' : ''}</div>
+        ${ai.brief ? `<div class="ab"><span class="lab">AI 导读</span>${ai.brief}</div>` : ''}
+        <div class="art-meta">
+          ${locTxt ? `<span class="chip ${locCls}">${locTxt}</span>` : ''}
+          ${depTxt ? `<span class="chip ${depCls}">${depTxt}</span>` : ''}
+          ${(ai.tags || []).map(t => `<span class="chip">${t}</span>`).join('')}
+          ${a.doi ? `<a class="doi" href="https://doi.org/${a.doi}" target="_blank" rel="noopener">DOI:${a.doi}</a>` : ''}
+          <span class="src">${a.source === 'hgxb' ? '化工学报' : a.source}</span>
+        </div>
+      </article>`;
+  }
+
+  document.getElementById('quadrantPills').addEventListener('click', e => {
+    const btn = e.target.closest('.pill');
+    if (!btn) return;
+    document.querySelectorAll('#quadrantPills .pill').forEach(p => p.classList.remove('on'));
+    btn.classList.add('on');
+    applyFilter(btn.dataset.f);
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

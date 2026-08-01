@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>专业论文解读 — PetroPulse 石化脉动</title>
+<meta name="description" content="拖拽上传 Word(.docx)或 PDF 论文,AI 深度解读:研究设计、核心结论、数据评估、创新点与提升建议。">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .drop-zone {
+    border: 2px dashed rgba(246,168,33,.4); border-radius: 20px;
+    background:
+      radial-gradient(500px 240px at 50% 0%, rgba(246,168,33,.07), transparent 70%),
+      linear-gradient(180deg, rgba(255,255,255,.02), transparent);
+    padding: 90px 30px; text-align: center; cursor: pointer;
+    transition: border-color .25s, background .25s, transform .25s;
+    margin: 6px 0 20px;
+  }
+  .drop-zone:hover, .drop-zone.drag { border-color: var(--amber); background: rgba(246,168,33,.06); transform: scale(1.005); }
+  .drop-zone .big { font-size: 44px; margin-bottom: 12px; }
+  .drop-zone h3 { font-size: 19px; margin-bottom: 8px; }
+  .drop-zone p { color: var(--t-3); font-size: 13px; }
+  .drop-zone .fmts { margin-top: 14px; display: flex; gap: 10px; justify-content: center; }
+  .drop-zone .fmts span { font-size: 11.5px; padding: 4px 12px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid var(--line); color: var(--t-2); }
+  .file-info { display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; }
+  .file-info .fi { flex: 1; }
+  .file-info .fn { font-weight: 600; font-size: 14.5px; word-break: break-all; }
+  .file-info .fs { font-size: 12px; color: var(--t-3); margin-top: 3px; }
+  .progress-wrap { margin-bottom: 20px; }
+  .prog-bar { height: 7px; border-radius: 99px; background: rgba(255,255,255,.06); overflow: hidden; }
+  .prog-bar i { display: block; height: 100%; width: 0; border-radius: 99px; background: var(--grad-brand); transition: width .4s; }
+  .prog-lbl { font-size: 12px; color: var(--t-3); margin-top: 8px; display: flex; justify-content: space-between; }
+  .thinking {
+    font-size: 12px; color: var(--t-3); background: rgba(45,212,248,.05);
+    border: 1px solid rgba(45,212,248,.18); border-radius: 10px; padding: 12px 16px;
+    margin-bottom: 12px; max-height: 160px; overflow-y: auto; white-space: pre-wrap; display: none;
+  }
+  .thinking.on { display: block; }
+  .report { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 14px; padding: 24px 26px; font-size: 13.5px; line-height: 1.85; color: var(--t-2); }
+  .report h2 { color: var(--t-1); font-size: 16.5px; border-left: 3px solid var(--amber); padding-left: 10px; margin: 20px 0 8px; }
+  .report h3 { color: var(--t-1); font-size: 14.5px; margin: 14px 0 6px; }
+  .report ul { padding-left: 20px; list-style: disc; }
+  .report li { margin: 5px 0; }
+  .report strong { color: var(--amber); }
+  .report blockquote { border-left: 3px solid var(--cyan); padding-left: 12px; color: var(--t-3); margin: 8px 0; }
+  .report code { background: rgba(255,255,255,.06); padding: 1px 6px; border-radius: 5px; font-size: 12px; }
+  .report table { border-collapse: collapse; margin: 10px 0; width: 100%; }
+  .report td, .report th { border: 1px solid var(--line); padding: 6px 12px; font-size: 12.5px; }
+  .report th { background: rgba(255,255,255,.04); }
+  .ai-warn { font-size: 12px; color: var(--amber); border: 1px dashed rgba(246,168,33,.35); background: rgba(246,168,33,.05); border-radius: 10px; padding: 10px 16px; margin-bottom: 18px; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<!-- ================= 导航 ================= -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#111c33"/>
+        <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+        <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+      </svg>
+      <span>石化脉动<span class="en">PETROPULSE</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="market.html">市场数据</a>
+      <a href="chain.html">产业链</a>
+      <a href="journal.html">学报洞察</a>
+      <a href="about.html">关于</a>
+      <a class="btn btn-primary nav-cta" href="market.html">进入数据平台</a>
+    </div>
+    <button class="nav-burger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ================= 页首 ================= -->
+<header class="page-hero">
+  <div class="container">
+    <div class="crumbs">HOME / <b>PAPER INTERPRETATION</b></div>
+    <span class="eyebrow" style="text-transform:none">📄 Word / PDF 专业解读</span>
+    <h1>专业论文解读</h1>
+    <p class="sec-sub" style="margin-top:14px">将论文文件<b class="hl">拖拽到下方区域</b>(或点击选择),AI 将在本地解析文本后,从研究设计、核心结论、数据与证据、创新点与不足、提升建议六个维度输出专业解读报告。所有解析在浏览器本地完成,文件不会上传。</p>
+  </div>
+</header>
+
+<section class="block" style="padding-top:10px">
+  <div class="container">
+    <div class="ai-warn">⚠️ <b>直连模式说明</b>:AI 由浏览器直连 DeepSeek API(模型 DeepSeek V4 Flash[1M]),密钥内置于前端,仅供学习测试。支持 <b>.pdf</b> 与 <b>.docx</b> 格式(.doc 老格式请先另存为 .docx)。</div>
+
+    <!-- 拖拽区 -->
+    <div class="drop-zone" id="dropZone">
+      <div class="big">📂</div>
+      <h3>拖拽论文文件到这里</h3>
+      <p>或点击选择文件 · 支持 PDF / Word(.docx)</p>
+      <div class="fmts"><span>PDF</span><span>DOCX</span></div>
+    </div>
+
+    <div id="fileInfo" class="file-info" style="display:none">
+      <div class="fi">
+        <div class="fn" id="fileName"></div>
+        <div class="fs" id="fileStat"></div>
+      </div>
+      <button class="btn btn-primary" id="btnInterpret">开始解读</button>
+      <button class="btn btn-ghost" id="btnReset">换一个</button>
+    </div>
+
+    <div class="progress-wrap" id="progress" style="display:none">
+      <div class="prog-bar"><i id="progBar"></i></div>
+      <div class="prog-lbl"><span id="progTxt">解析中…</span><span id="progPct">0%</span></div>
+    </div>
+
+    <div class="thinking" id="thinking"></div>
+    <div class="report" id="report"><p style="color:var(--t-3);text-align:center;padding:80px 0">解读报告将显示在这里</p></div>
+  </div>
+</section>
+
+<!-- ================= 页脚 ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:6px">
+          <svg viewBox="0 0 64 64" width="28" height="28" fill="none" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#111c33"/>
+            <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+            <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+          </svg>
+          <span>石化脉动<span class="en">PETROPULSE</span></span>
+        </a>
+        <p class="desc">以数据视角感知石化产业脉搏 —— 行情、产业链、企业动态与绿色转型,一站尽览。</p>
+      </div>
+      <div><h5>快速导航</h5><ul><li><a href="index.html">首页</a></li><li><a href="market.html">市场数据</a></li><li><a href="chain.html">产业链</a></li><li><a href="journal.html">学报洞察</a></li><li><a href="about.html">关于本站</a></li></ul></div>
+      <div><h5>数据平台</h5><ul><li><a href="market.html">原油价格走势</a></li><li><a href="market.html">化工品价格对比</a></li><li><a href="market.html">产能与贸易结构</a></li><li><a href="chain.html">产业链图谱</a></li></ul></div>
+      <div><h5>AI 工具</h5><ul><li><a href="journal.html">学报洞察</a></li><li><a href="interpret.html">论文解读(Word/PDF)</a></li><li><a href="papers.html">大学生论文诊断</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PetroPulse 石化脉动 · 由 Claude Code 生成</span>
+      <span class="warn">论文在本地解析,文件不会上传;AI 解读仅供学习参考</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/vendor/mammoth.browser.min.js"></script>
+<script src="assets/js/ai.js"></script>
+<script>
+(function () {
+  'use strict';
+  const dz = document.getElementById('dropZone');
+  const fileInfo = document.getElementById('fileInfo');
+  const progress = document.getElementById('progress');
+  const thinking = document.getElementById('thinking');
+  const report = document.getElementById('report');
+  const progBar = document.getElementById('progBar');
+  const progTxt = document.getElementById('progTxt');
+  const progPct = document.getElementById('progPct');
+
+  let currentFile = null;
+  let parsedText = '';
+
+  /* ---------- 拖拽与选择 ---------- */
+  dz.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.docx';
+    input.onchange = () => input.files[0] && handleFile(input.files[0]);
+    input.click();
+  });
+  ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('drag'); }));
+  ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('drag'); }));
+  dz.addEventListener('drop', e => {
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+
+  function handleFile(f) {
+    const ext = f.name.split('.').pop().toLowerCase();
+    if (ext !== 'pdf' && ext !== 'docx') { alert('仅支持 .pdf 与 .docx 文件'); return; }
+    currentFile = f;
+    parsedText = '';
+    dz.style.display = 'none';
+    fileInfo.style.display = 'flex';
+    document.getElementById('fileName').textContent = f.name;
+    document.getElementById('fileStat').textContent = `${(f.size / 1024 / 1024).toFixed(2)} MB · ${ext.toUpperCase()}`;
+    report.innerHTML = '<p style="color:var(--t-3);text-align:center;padding:80px 0">文件已就绪,点击「开始解读」</p>';
+  }
+
+  document.getElementById('btnReset').addEventListener('click', () => {
+    currentFile = null; parsedText = '';
+    dz.style.display = 'block';
+    fileInfo.style.display = 'none';
+    progress.style.display = 'none';
+    thinking.classList.remove('on');
+    report.innerHTML = '<p style="color:var(--t-3);text-align:center;padding:80px 0">解读报告将显示在这里</p>';
+  });
+
+  /* ---------- 本地解析 ---------- */
+  async function parseFile(f, onProg) {
+    const buf = await f.arrayBuffer();
+    const ext = f.name.split('.').pop().toLowerCase();
+    if (ext === 'docx') {
+      const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+      return res.value;
+    }
+    /* PDF: 动态加载 pdfjs */
+    const pdfjs = await import('./assets/js/vendor/pdf.min.mjs');
+    pdfjs.GlobalWorkerOptions.workerSrc = './assets/js/vendor/pdf.worker.min.mjs';
+    const doc = await pdfjs.getDocument({ data: buf }).promise;
+    let out = [];
+    for (let p = 1; p <= doc.numPages; p++) {
+      const page = await doc.getPage(p);
+      const tc = await page.getTextContent();
+      out.push(tc.items.map(i => i.str).join(' '));
+      onProg(p / doc.numPages);
+    }
+    return out.join('\n');
+  }
+
+  /* ---------- 解读 ---------- */
+  document.getElementById('btnInterpret').addEventListener('click', async () => {
+    if (!currentFile) return;
+    const btn = document.getElementById('btnInterpret');
+    btn.classList.add('busy');
+    progress.style.display = 'block';
+    report.innerHTML = '<p style="color:var(--t-3);text-align:center;padding:60px 0">正在解析文件…</p>';
+    try {
+      progTxt.textContent = '解析文件中…';
+      parsedText = await parseFile(currentFile, ratio => {
+        progBar.style.width = (ratio * 100).toFixed(0) + '%';
+        progPct.textContent = (ratio * 100).toFixed(0) + '%';
+      });
+      if (parsedText.trim().length < 80) throw new Error('未能从文件中提取到有效文本(可能是扫描版 PDF)');
+      document.getElementById('fileStat').textContent = `${currentFile.name.split('.').pop().toUpperCase()} · 已提取 ${parsedText.length} 字`;
+
+      progBar.style.width = '100%';
+      progTxt.textContent = 'AI 解读中…';
+      thinking.classList.add('on');
+      thinking.textContent = '';
+
+      /* 分块解读:每块 4000 字,重叠 200 */
+      const chunks = [];
+      for (let i = 0; i < parsedText.length; i += 3800) chunks.push(parsedText.slice(i, i + 4000));
+      progPct.textContent = '0/' + chunks.length;
+
+      const SYS = `你是石油化工领域的资深学术审稿专家。用户将分块发送一篇论文的全文文本,请对每一块进行解读,最终整合输出 Markdown 报告,结构:
+
+## 一、论文概述
+(研究问题、对象、方法与核心思路,150 字内)
+
+## 二、研究设计与方法评价
+(设计合理性、方法适用性、创新点)
+
+## 三、核心结论
+(逐条列出论文主要结论)
+
+## 四、数据与证据评估
+(数据来源、样本量、图表质量;重点检查:术语是否误用、工艺概念是否混淆、单位与量级是否错误、结论是否有数据支撑)
+
+## 五、创新点与不足
+
+## 六、修改与提升建议
+(按优先级列出可操作建议)
+
+要求:专业、具体;对缺失信息明确说明"原文未提供",不要臆测。若收到的是论文中间片段,可先输出该片段要点的解读,最终汇总时整合。`;
+
+      let contentBuf = '', reasoningBuf = '';
+      const all = [];
+      for (let ci = 0; ci < chunks.length; ci++) {
+        all.push({ role: 'user', content: `论文内容 第${ci + 1}/${chunks.length} 块:\n${chunks[ci]}` });
+        progTxt.textContent = `AI 解读第 ${ci + 1}/${chunks.length} 块…`;
+        progPct.textContent = `${ci + 1}/${chunks.length}`;
+        await PP_AI.chatStream(
+          [{ role: 'system', content: SYS }, ...all],
+          {
+            maxTokens: 4000,
+            onReasoning: d => { reasoningBuf += d; thinking.textContent = reasoningBuf.slice(-1200); thinking.scrollTop = thinking.scrollHeight; },
+            onDelta: d => {
+              contentBuf += d;
+              report.innerHTML = renderMD(contentBuf) + '<p style="color:var(--t-3)">▍</p>';
+            }
+          }
+        );
+        /* 压缩已处理内容,保持上下文在预算内 */
+        all.length = 1; /* 保留系统提示 */
+        all.push({ role: 'assistant', content: contentBuf.slice(-3000) });
+        all.push({ role: 'user', content: `继续解读论文 第${ci + 2}/${chunks.length} 块:\n${chunks[ci + 1] || ''}` });
+        if (ci === chunks.length - 1) all.pop();
+      }
+      report.innerHTML = renderMD(contentBuf);
+      progress.style.display = 'none';
+      thinking.classList.remove('on');
+    } catch (e) {
+      progress.style.display = 'none';
+      report.innerHTML = `<p style="color:var(--down)">解读失败:${e.message}</p>`;
+    } finally {
+      btn.classList.remove('busy');
+    }
+  });
+
+  /* ---------- Markdown 渲染(与 papers.html 共用逻辑) ---------- */
+  function renderMD(md) {
+    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const inline = s => s
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/^> ?(.*)/, m => '<blockquote>' + m.slice(2) + '</blockquote>');
+    let lines = esc(md).split('\n');
+    let html = '', inUl = false, inTb = false;
+    const closeUl = () => { if (inUl) { html += '</ul>'; inUl = false; } };
+    for (const raw of lines) {
+      const l = raw.trimEnd();
+      if (/^### /.test(l)) { closeUl(); inTb = false; html += `<h3>${inline(l.slice(4))}</h3>`; }
+      else if (/^## /.test(l)) { closeUl(); inTb = false; html += `<h2>${inline(l.slice(3))}</h2>`; }
+      else if (/^- /.test(l)) { if (!inUl) { html += '<ul>'; inUl = true; } html += `<li>${inline(l.replace(/^- /, ''))}</li>`; }
+      else if (/^\d+\. /.test(l)) { closeUl(); inTb = false; html += `<p>${inline(l)}</p>`; }
+      else if (l.startsWith('|') && l.endsWith('|') && !inTb) {
+        inTb = true; closeUl();
+        const cells = l.split('|').filter((_, i, a) => i > 0 && i < a.length - 1).map(c => c.trim());
+        if (/^[\s\-:]*$/.test(cells.join(''))) html += '</table>';
+        else html += '<table><tr>' + cells.map(c => `<th>${inline(c)}</th>`).join('') + '</tr>';
+      }
+      else if (l.startsWith('|') && inTb) {
+        const cells = l.split('|').filter((_, i, a) => i > 0 && i < a.length - 1).map(c => c.trim());
+        html += '<tr>' + cells.map(c => `<td>${inline(c)}</td>`).join('') + '</tr>';
+      }
+      else if (!l.trim()) { closeUl(); }
+      else { closeUl(); inTb = false; html += `<p>${inline(l)}</p>`; }
+    }
+    closeUl();
+    return html;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大学生论文诊断 — PetroPulse 石化脉动</title>
+<meta name="description" content="面向石化行业大学生论文的 AI 诊断:学术规范、行业常识、术语与数据问题逐条分析并给出修改建议。">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .ai-warn {
+    font-size: 12px; color: var(--amber); border: 1px dashed rgba(246,168,33,.35);
+    background: rgba(246,168,33,.05); border-radius: 10px; padding: 10px 16px; margin-bottom: 18px; line-height: 1.7;
+  }
+  .editor { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 1000px) { .editor { grid-template-columns: 1fr; } }
+  .input-box textarea {
+    width: 100%; min-height: 480px; resize: vertical;
+    background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 14px;
+    color: var(--t-1); font-size: 13.5px; line-height: 1.8; padding: 18px; font-family: var(--font);
+  }
+  .input-box textarea:focus { outline: none; border-color: rgba(246,168,33,.5); }
+  .btn-row { display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
+  .btn-row .hint { font-size: 12px; color: var(--t-3); }
+  .out-box { position: sticky; top: calc(var(--nav-h) + 20px); }
+  .out-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .out-head .st { font-size: 12.5px; color: var(--t-3); }
+  .thinking {
+    font-size: 12px; color: var(--t-3); background: rgba(45,212,248,.05);
+    border: 1px solid rgba(45,212,248,.18); border-radius: 10px; padding: 12px 16px;
+    margin-bottom: 12px; max-height: 180px; overflow-y: auto; white-space: pre-wrap; display: none;
+  }
+  .thinking.on { display: block; }
+  .report { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; min-height: 420px; font-size: 13.5px; line-height: 1.85; color: var(--t-2); }
+  .report h1, .report h2, .report h3 { color: var(--t-1); margin: 18px 0 8px; }
+  .report h2 { font-size: 16px; border-left: 3px solid var(--amber); padding-left: 10px; }
+  .report ul { padding-left: 20px; list-style: disc; }
+  .report li { margin: 6px 0; }
+  .report strong { color: var(--amber); }
+  .report code { background: rgba(255,255,255,.06); padding: 1px 6px; border-radius: 5px; font-size: 12px; }
+  .report blockquote { border-left: 3px solid var(--cyan); padding-left: 12px; color: var(--t-3); margin: 8px 0; }
+  .report table { border-collapse: collapse; margin: 10px 0; }
+  .report td, .report th { border: 1px solid var(--line); padding: 6px 12px; font-size: 12.5px; }
+  .busy { opacity: .55; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<!-- ================= 导航 ================= -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#111c33"/>
+        <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+        <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+      </svg>
+      <span>石化脉动<span class="en">PETROPULSE</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="market.html">市场数据</a>
+      <a href="chain.html">产业链</a>
+      <a href="journal.html">学报洞察</a>
+      <a href="about.html">关于</a>
+      <a class="btn btn-primary nav-cta" href="market.html">进入数据平台</a>
+    </div>
+    <button class="nav-burger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ================= 页首 ================= -->
+<header class="page-hero">
+  <div class="container">
+    <div class="crumbs">HOME / <b>STUDENT PAPER DIAGNOSIS</b></div>
+    <span class="eyebrow" style="text-transform:none">🎓 面向石化行业大学生论文</span>
+    <h1>大学生论文诊断</h1>
+    <p class="sec-sub" style="margin-top:14px">将论文(题目/摘要/正文片段)粘贴到左侧,AI 将针对<b class="hl">学术规范</b>与<b class="hl">石化行业常识性错误</b>(术语误用、工艺流程混淆、单位与量级错误等)逐条诊断,并给出可操作的修改建议。</p>
+  </div>
+</header>
+
+<section class="block" style="padding-top:10px">
+  <div class="container">
+    <div class="ai-warn">⚠️ <b>直连模式说明</b>:当前 AI 功能由浏览器直连 DeepSeek API(模型 DeepSeek V4 Flash[1M]),密钥内置于前端,仅供学习测试。正式使用请更换自己的 Key(见页面底部设置)并在 DeepSeek 后台轮换/限额此 Key。</div>
+    <div class="editor">
+      <div class="input-box">
+        <div class="chart-head" style="margin-bottom:10px">
+          <h3 style="font-size:16px">粘贴论文内容</h3>
+          <span class="tag">建议 500—8000 字</span>
+        </div>
+        <textarea id="paperText" placeholder="在此粘贴论文题目、摘要、关键词或正文片段……&#10;&#10;例如:&#10;题目:基于某油田的注水开发效果评价研究&#10;摘要:本文研究了…采用…方法…"></textarea>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btnAnalyze">开始诊断</button>
+          <button class="btn btn-ghost" id="btnClear">清空</button>
+          <span class="hint">诊断约需 20—60 秒,AI 会先"思考"再给出报告</span>
+        </div>
+      </div>
+      <div class="out-box">
+        <div class="out-head">
+          <h3 style="font-size:16px">诊断报告</h3>
+          <span class="st" id="status">待命</span>
+        </div>
+        <div class="thinking" id="thinking"></div>
+        <div class="report" id="report"><p style="color:var(--t-3);text-align:center;padding:80px 0">诊断报告将显示在这里</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 页脚 ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:6px">
+          <svg viewBox="0 0 64 64" width="28" height="28" fill="none" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#111c33"/>
+            <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+            <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+          </svg>
+          <span>石化脉动<span class="en">PETROPULSE</span></span>
+        </a>
+        <p class="desc">以数据视角感知石化产业脉搏 —— 行情、产业链、企业动态与绿色转型,一站尽览。</p>
+      </div>
+      <div><h5>快速导航</h5><ul><li><a href="index.html">首页</a></li><li><a href="market.html">市场数据</a></li><li><a href="chain.html">产业链</a></li><li><a href="journal.html">学报洞察</a></li><li><a href="about.html">关于本站</a></li></ul></div>
+      <div><h5>数据平台</h5><ul><li><a href="market.html">原油价格走势</a></li><li><a href="market.html">化工品价格对比</a></li><li><a href="market.html">产能与贸易结构</a></li><li><a href="chain.html">产业链图谱</a></li></ul></div>
+      <div><h5>AI 工具</h5><ul><li><a href="journal.html">学报洞察</a></li><li><a href="interpret.html">论文解读(Word/PDF)</a></li><li><a href="papers.html">大学生论文诊断</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PetroPulse 石化脉动 · 由 Claude Code 生成</span>
+      <span class="warn">AI 诊断结果仅供学习参考,不构成任何学术评价</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/ai.js"></script>
+<script>
+(function () {
+  'use strict';
+  const btn = document.getElementById('btnAnalyze');
+  const ta = document.getElementById('paperText');
+  const report = document.getElementById('report');
+  const thinking = document.getElementById('thinking');
+  const status = document.getElementById('status');
+
+  const SYS = `你是石油化工领域的资深审稿专家,长期指导石油工程、油气储运、化学工程与工艺等专业大学生的毕业论文与课程论文。
+
+请对用户提交的大学生论文内容进行诊断,输出 Markdown 报告,结构如下:
+
+## 一、总体评价
+(2-3 句概括论文水平与主要问题)
+
+## 二、学术规范问题
+逐条列出,每条格式:
+**【问题类型】**
+- 原文表现:(引用原文或描述)
+- 问题说明:(为什么是问题)
+- 修改建议:(具体可操作)
+
+覆盖:论文结构完整性、逻辑衔接、引用与文献规范、图表与数据标注、摘要与结论一致性等。
+
+## 三、石化行业常识性错误
+逐条列出(这是重点,要求专业),覆盖但不限于:
+- 术语误用:如"油田/油气田/气田/油藏"混用、"轻质原油/重质原油"概念混淆、"储量/产量/产能"口径错误、"采收率/采出程度"混淆
+- 工艺理解错误:如常减压蒸馏与催化裂化混淆、注水开发与压裂概念混用、EOR 机理表述错误
+- 单位与量级错误:如 MPa 与 Pa、m³ 与 t 换算错误、油藏深度/压力量级不合理
+- 数据常识错误:如某油田产量/储量数字明显不合理、采收率超出理论极限等
+
+每条格式同上(原文表现/问题说明/修改建议)。
+
+## 四、语言与表达问题
+(简明列出 2-4 条)
+
+## 五、修改优先级清单
+(按重要程度排序的 3-5 条关键修改任务)
+
+要求:诊断要专业、具体、可操作;如论文内容不足无法判断的方面,明确说明"信息不足"而不是猜测。`;
+
+  function renderMD(md) {
+    /* 轻量 Markdown 渲染(标题/列表/加粗/引用/代码/表格) */
+    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    let lines = esc(md).split('\n');
+    let html = '', inUl = false, inTb = false;
+    const closeUl = () => { if (inUl) { html += '</ul>'; inUl = false; } };
+    for (const raw of lines) {
+      const l = raw.trimEnd();
+      const inline = s => s
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/^> ?(.*)/, m => '<blockquote>' + m.slice(2) + '</blockquote>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      if (/^### /.test(l)) { closeUl(); inTb = false; html += `<h3>${inline(l.slice(4))}</h3>`; }
+      else if (/^## /.test(l)) { closeUl(); inTb = false; html += `<h2>${inline(l.slice(3))}</h2>`; }
+      else if (/^# /.test(l)) { closeUl(); inTb = false; html += `<h1>${inline(l.slice(2))}</h1>`; }
+      else if (/^- /.test(l) || /^\* /.test(l)) {
+        if (!inUl) { html += '<ul>'; inUl = true; }
+        html += `<li>${inline(l.replace(/^[-*] /, ''))}</li>`;
+      }
+      else if (/^\d+\. /.test(l)) {
+        closeUl(); inTb = false;
+        html += `<p>${inline(l)}</p>`;
+      }
+      else if (l.startsWith('|') && l.endsWith('|') && !inTb) {
+        inTb = true; closeUl();
+        const cells = l.split('|').filter((_, i, a) => i > 0 && i < a.length - 1).map(c => c.trim());
+        const tag = /^[\s\-:]*$/.test(cells.join('')) ? '</table>' : '<table><tr>' + cells.map(c => `<th>${inline(c)}</th>`).join('') + '</tr>';
+        html += tag;
+      }
+      else if (l.startsWith('|') && inTb) {
+        const cells = l.split('|').filter((_, i, a) => i > 0 && i < a.length - 1).map(c => c.trim());
+        html += '<tr>' + cells.map(c => `<td>${inline(c)}</td>`).join('') + '</tr>';
+      }
+      else if (!l.trim()) { closeUl(); html += ''; }
+      else { closeUl(); inTb = false; html += `<p>${inline(l)}</p>`; }
+    }
+    closeUl();
+    return html;
+  }
+
+  btn.addEventListener('click', async () => {
+    const text = ta.value.trim();
+    if (text.length < 50) { alert('请至少输入 50 字论文内容'); return; }
+    btn.classList.add('busy');
+    status.textContent = 'AI 思考中…';
+    thinking.classList.add('on');
+    thinking.textContent = '';
+    report.innerHTML = '<p style="color:var(--t-3);text-align:center;padding:60px 0">正在生成诊断报告…</p>';
+    let reasoningBuf = '', contentBuf = '';
+    try {
+      await PP_AI.chatStream(
+        [{ role: 'system', content: SYS }, { role: 'user', content: `以下是我的论文内容,请诊断:\n\n${text.slice(0, 8000)}` }],
+        {
+          maxTokens: 6000,
+          onReasoning: d => { reasoningBuf += d; thinking.textContent = reasoningBuf.slice(-1500); thinking.scrollTop = thinking.scrollHeight; },
+          onDelta: d => {
+            contentBuf += d;
+            status.textContent = `已生成 ${contentBuf.length} 字…`;
+            report.innerHTML = renderMD(contentBuf) + '<p style="color:var(--t-3)">▍</p>';
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+          }
+        }
+      );
+      report.innerHTML = renderMD(contentBuf);
+      status.textContent = '完成 ✅';
+      thinking.classList.remove('on');
+    } catch (e) {
+      status.textContent = '失败';
+      report.innerHTML = `<p style="color:var(--down)">诊断失败:${e.message}</p>`;
+    } finally {
+      btn.classList.remove('busy');
+    }
+  });
+
+  document.getElementById('btnClear').addEventListener('click', () => {
+    ta.value = '';
+    report.innerHTML = '<p style="color:var(--t-3);text-align:center;padding:80px 0">诊断报告将显示在这里</p>';
+    thinking.classList.remove('on');
+    status.textContent = '待命';
+  });
+})();
+</script>
+</body>
+</html>

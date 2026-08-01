@@ -4,7 +4,7 @@ import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const pages = ['index.html', 'market.html', 'chain.html', 'about.html'];
+const pages = ['index.html', 'market.html', 'chain.html', 'about.html', 'space.html', 'journal.html', 'papers.html', 'interpret.html'];
 let errors = 0;
 
 for (const p of pages) {

@@ -1,0 +1,47 @@
+name: update-journals
+
+on:
+  schedule:
+    # 每日 06:17 与 18:17 各一次(学报日更,避开整点)
+    - cron: '17 6 * * *'
+    - cron: '17 18 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-journals
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Crawl journals and run AI analysis
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: node scripts/fetch-journals.mjs
+
+      - name: Commit data changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "petropulse-bot"
+          git config user.email "petropulse-bot@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git add data/journal.json
+          if git diff --cached --quiet; then
+            echo "数据无变化,跳过提交"
+          else
+            git commit -m "data: 学报爬取与AI分析 $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push origin main
+          fi
