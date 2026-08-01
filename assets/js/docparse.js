@@ -12,8 +12,11 @@ window.PP_DOC = {
       return { text: res.value, ext };
     }
     if (ext === 'pdf') {
-      const pdfjs = await import('./assets/js/vendor/pdf.min.mjs');
-      pdfjs.GlobalWorkerOptions.workerSrc = './assets/js/vendor/pdf.worker.min.mjs';
+      /* 注意:动态 import 在外部经典脚本中按脚本自身 URL 解析相对路径,
+         必须基于 document.baseURI 显式构造(兼容子路径部署与镜像站) */
+      const base = document.baseURI;
+      const pdfjs = await import(new URL('assets/js/vendor/pdf.min.mjs', base).href);
+      pdfjs.GlobalWorkerOptions.workerSrc = new URL('assets/js/vendor/pdf.worker.min.mjs', base).href;
       const doc = await pdfjs.getDocument({ data: buf }).promise;
       const pages = [];
       for (let p = 1; p <= doc.numPages; p++) {
