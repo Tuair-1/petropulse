@@ -239,6 +239,9 @@ section.block { padding: 92px 0; position: relative; }
 .ticker:hover .ticker-track { animation-play-state: paused; }
 @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .ticker-item { display: flex; align-items: center; gap: 10px; padding: 13px 26px; border-right: 1px solid var(--line-soft); white-space: nowrap; }
+.clickable { cursor: pointer; }
+.ticker-item:hover { background: rgba(246, 168, 33, .06); }
+.card.clickable:hover, .prod.clickable:hover, .co.clickable:hover, .news.clickable:hover, .kpi.clickable:hover { cursor: pointer; }
 .ticker-item .nm { color: var(--t-2); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
 .ticker-item .unit { color: var(--t-3); font-size: 11px; }
 .demo-chip {

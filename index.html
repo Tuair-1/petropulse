@@ -712,7 +712,7 @@
   const chart = echarts.init(document.getElementById('overviewChart'));
   const ovTag = document.getElementById('ovTag');
   const mkSeries = (s, d, n) => ({
-    name: s.name, type: 'line', smooth: true, symbol: 'none',
+    name: s.name, type: 'line', color: s.color, smooth: true, symbol: 'none',
     data: n ? s.data.slice(-n) : s.data,
     lineStyle: { width: 2.5, color: s.color },
     areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [

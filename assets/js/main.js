@@ -59,18 +59,18 @@ document.querySelectorAll('[data-count]').forEach(el => numIO.observe(el));
 /* ---------- 行情数据:三级降级(仓库 JSON → Yahoo 直连 → 演示) ---------- */
 window.PP = window.PP || {}; // 先占位,避免下方赋值早于 PP 定义
 window.PP_DEMO_QUOTES = [
-  { nm: '布伦特原油',  px: 59.92, ch: +0.85, unit: '美元/桶', src: 'demo' },
-  { nm: 'WTI 原油',    px: 56.74, ch: +1.02, unit: '美元/桶', src: 'demo' },
-  { nm: '乙烯 CIF',    px: 765,   ch: -1.40, unit: '美元/吨', src: 'demo' },
-  { nm: '丙烯 FOB',    px: 798,   ch: +0.62, unit: '美元/吨', src: 'demo' },
-  { nm: '苯 CIF',      px: 845,   ch: +1.85, unit: '美元/吨', src: 'demo' },
-  { nm: '对二甲苯 PX', px: 936,   ch: +0.44, unit: '美元/吨', src: 'demo' },
-  { nm: '甲醇 CFR',    px: 292,   ch: -0.35, unit: '美元/吨', src: 'demo' },
-  { nm: '聚乙烯 PE',   px: 918,   ch: +0.28, unit: '美元/吨', src: 'demo' },
-  { nm: '聚丙烯 PP',   px: 896,   ch: +1.10, unit: '美元/吨', src: 'demo' },
-  { nm: 'PVC',         px: 648,   ch: -0.72, unit: '美元/吨', src: 'demo' },
-  { nm: '乙二醇 MEG',  px: 512,   ch: +2.30, unit: '美元/吨', src: 'demo' },
-  { nm: '尿素',        px: 2385,  ch: +0.19, unit: '元/吨',   src: 'demo' }
+  { key: 'brent',     nm: '布伦特原油',  px: 59.92, ch: +0.85, unit: '美元/桶', src: 'demo' },
+  { key: 'wti',       nm: 'WTI 原油',    px: 56.74, ch: +1.02, unit: '美元/桶', src: 'demo' },
+  { key: 'ethylene',  nm: '乙烯 CIF',    px: 765,   ch: -1.40, unit: '美元/吨', src: 'demo' },
+  { key: 'propylene', nm: '丙烯',        px: 798,   ch: +0.62, unit: '元/吨',   src: 'demo' },
+  { key: 'benzene',   nm: '纯苯',        px: 845,   ch: +1.85, unit: '元/吨',   src: 'demo' },
+  { key: 'px',        nm: '对二甲苯 PX', px: 936,   ch: +0.44, unit: '元/吨',   src: 'demo' },
+  { key: 'ma',        nm: '甲醇',        px: 292,   ch: -0.35, unit: '元/吨',   src: 'demo' },
+  { key: 'l',         nm: '聚乙烯 L',    px: 918,   ch: +0.28, unit: '元/吨',   src: 'demo' },
+  { key: 'pp',        nm: '聚丙烯 PP',   px: 896,   ch: +1.10, unit: '元/吨',   src: 'demo' },
+  { key: 'v',         nm: 'PVC',         px: 648,   ch: -0.72, unit: '元/吨',   src: 'demo' },
+  { key: 'eg',        nm: '乙二醇 EG',   px: 512,   ch: +2.30, unit: '元/吨',   src: 'demo' },
+  { key: 'ur',        nm: '尿素',        px: 2385,  ch: +0.19, unit: '元/吨',   src: 'demo' }
 ];
 window.PP_QUOTES = PP_DEMO_QUOTES.slice();
 
@@ -134,7 +134,7 @@ function renderTicker(qs) {
   if (!track) return;
   const isDemo = q => q.src === 'demo' || q.live === false;
   const item = q => `
-    <div class="ticker-item">
+    <div class="ticker-item clickable" data-space="${q.key || ''}" title="查看 ${q.nm} 空间">
       <span class="nm">${q.nm}${isDemo(q) ? '<span class="demo-chip" title="演示数据">演</span>' : ''}</span>
       <span class="px">${q.px.toLocaleString('zh-CN', { maximumFractionDigits: 2 })}</span>
       <span class="ch ${q.ch >= 0 ? 'up' : 'down'}">${q.ch >= 0 ? '▲' : '▼'} ${Math.abs(q.ch).toFixed(2)}%</span>
@@ -142,6 +142,41 @@ function renderTicker(qs) {
     </div>`;
   track.innerHTML = qs.map(item).join('') + qs.map(item).join('');
 }
+
+/* ---------- 空间页跳转:所有 [data-space] 元素点击跳转 ---------- */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-space]');
+  if (!el) return;
+  e.preventDefault();
+  location.href = 'space.html?k=' + encodeURIComponent(el.dataset.space);
+});
+
+/* 自动挂载 data-space:产品卡/企业卡/KPI 卡按文本匹配空间映射 */
+const SPACE_MAP = {
+  '乙烯': 'ethylene', '丙烯': 'propylene', '苯': 'benzene', '对二甲苯': 'px',
+  '甲醇': 'ma', '聚乙烯': 'l', '聚丙烯': 'pp', '尿素': 'ur',
+  '布伦特原油': 'brent', 'WTI 原油': 'wti'
+};
+const SPACE_COMPANY_MAP = {
+  '中国石化': 'sinopec', '中国石油': 'petrochina', '中国海油': 'cnooc',
+  '恒力石化': 'hengli', '荣盛石化': 'rongsheng', '万华化学': 'wanhua',
+  '卫星化学': 'satellite', '东方盛虹': 'shenghong'
+};
+function wireSpaces() {
+  document.querySelectorAll('.prod h3, .kpi .k').forEach(el => {
+    const k = SPACE_MAP[el.textContent.trim()];
+    if (!k) return;
+    const card = el.closest('.prod, .kpi');
+    if (card) { card.classList.add('clickable'); card.dataset.space = k; }
+  });
+  document.querySelectorAll('.co h4').forEach(el => {
+    const k = SPACE_COMPANY_MAP[el.textContent.trim()];
+    if (!k) return;
+    const card = el.closest('.co');
+    if (card) { card.classList.add('clickable'); card.dataset.space = k; }
+  });
+}
+document.addEventListener('DOMContentLoaded', wireSpaces);
 
 /* ---------- 数据源徽章 ---------- */
 function renderBadge(state) {
@@ -172,7 +207,7 @@ function renderBadge(state) {
 /* ---------- KPI 数据绑定 ---------- */
 function bindQuotes(qs) {
   document.querySelectorAll('[data-quote]').forEach(el => {
-    const q = qs.find(x => x.nm === el.dataset.quote);
+    const q = qs.find(x => (el.dataset.key && x.key === el.dataset.key) || x.nm === el.dataset.quote);
     if (!q) return;
     const v = el.querySelector('.v');
     if (v) {

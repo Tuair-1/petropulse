@@ -194,20 +194,20 @@
       const series = [];
       if (oilReal.brent) {
         series.push({
-          name: '布伦特', type: 'line', smooth: true, symbol: 'none', data: oilReal.brent.values.slice(-len),
+          name: '布伦特', type: 'line', color: '#f6a821', smooth: true, symbol: 'none', data: oilReal.brent.values.slice(-len),
           lineStyle: { width: 2.4, color: '#f6a821' },
           areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(246,168,33,.3)' }, { offset: 1, color: 'rgba(246,168,33,0)' }]) },
           markPoint: {
             data: [{ type: 'max', name: '阶段高点' }, { type: 'min', name: '阶段低点' }],
             symbolSize: 44,
-            label: { color: '#0a1120', fontSize: 10, fontWeight: 700 },
-            itemStyle: { color: '#f6a821' }
+            label: { color: '#7c4a03', fontSize: 10, fontWeight: 700 },
+            itemStyle: { color: '#f6a821', borderColor: '#7c4a03', borderWidth: 1 }
           }
         });
       }
       if (oilReal.wti) {
         series.push({
-          name: 'WTI', type: 'line', smooth: true, symbol: 'none', data: oilReal.wti.values.slice(-len),
+          name: 'WTI', type: 'line', color: '#2dd4f8', smooth: true, symbol: 'none', data: oilReal.wti.values.slice(-len),
           lineStyle: { width: 2, color: '#2dd4f8' }
         });
       }
@@ -233,16 +233,16 @@
       xAxis: { ...PP_CHART_THEME.xAxis, data: weekLabels.slice(-len), boundaryGap: false },
       yAxis: { ...PP_CHART_THEME.yAxis, name: '美元/桶', nameTextStyle: { color: '#6b7893' } },
       series: [
-        { name: '布伦特', type: 'line', smooth: true, symbol: 'none', data: brent.slice(-len),
+        { name: '布伦特', type: 'line', color: '#f6a821', smooth: true, symbol: 'none', data: brent.slice(-len),
           lineStyle: { width: 2.4, color: '#f6a821' },
           areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(246,168,33,.3)' }, { offset: 1, color: 'rgba(246,168,33,0)' }]) },
           markPoint: {
             data: [{ type: 'max', name: '阶段高点' }, { type: 'min', name: '阶段低点' }],
             symbolSize: 44,
-            label: { color: '#0a1120', fontSize: 10, fontWeight: 700 },
-            itemStyle: { color: '#f6a821' }
+            label: { color: '#7c4a03', fontSize: 10, fontWeight: 700 },
+            itemStyle: { color: '#f6a821', borderColor: '#7c4a03', borderWidth: 1 }
           } },
-        { name: 'WTI', type: 'line', smooth: true, symbol: 'none', data: wti.slice(-len),
+        { name: 'WTI', type: 'line', color: '#2dd4f8', smooth: true, symbol: 'none', data: wti.slice(-len),
           lineStyle: { width: 2, color: '#2dd4f8' } }
       ]
     }, true);
@@ -299,7 +299,7 @@
       xAxis: { ...PP_CHART_THEME.xAxis, data: xLabels, boundaryGap: false },
       yAxis: { ...PP_CHART_THEME.yAxis, name: realMA ? '元/吨(甲醇) · 美元/吨(其余)' : '美元/吨', nameTextStyle: { color: '#6b7893' } },
       series: chem.map(s => ({
-        name: s.name, type: 'line', smooth: true, symbol: 'none',
+        name: s.name, type: 'line', color: s.color, smooth: true, symbol: 'none',
         data: s.name === '甲醇' && realMA ? realMA.values : s.data.slice(-n),
         lineStyle: { width: 2.2, color: s.color },
         areaStyle: s.name === '乙烯' ? { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(246,168,33,.22)' }, { offset: 1, color: 'rgba(246,168,33,0)' }]) } : undefined,
@@ -342,7 +342,7 @@
     xAxis: { ...PP_CHART_THEME.xAxis, data: monthLabels(2024, 1, 31), boundaryGap: false },
     yAxis: { ...PP_CHART_THEME.yAxis, min: 42, max: 68 },
     series: [{
-      name: '景气指数', type: 'line', smooth: true, symbol: 'none',
+      name: '景气指数', type: 'line', color: '#2dd4f8', smooth: true, symbol: 'none',
       data: cycle,
       lineStyle: { width: 2.6, color: '#2dd4f8' },
       areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(45,212,248,.3)' }, { offset: 1, color: 'rgba(45,212,248,0)' }]) },
@@ -372,7 +372,7 @@
       axisLabel: { color: '#aab6cf', fontSize: 12 }
     },
     series: [{
-      type: 'bar', barWidth: 14,
+      name: '产量', type: 'bar', color: '#f6a821', barWidth: 14,
       data: prods.map(p => p[1]),
       itemStyle: {
         borderRadius: [0, 7, 7, 0],
@@ -393,9 +393,9 @@
     xAxis: { ...PP_CHART_THEME.xAxis, data: ['2021', '2022', '2023', '2024', '2025'] },
     yAxis: { ...PP_CHART_THEME.yAxis, name: '万亿元', nameTextStyle: { color: '#6b7893' } },
     series: [
-      { name: '进口额', type: 'bar', barWidth: 20, data: [0.88, 0.92, 0.86, 0.90, 0.84],
+      { name: '进口额', type: 'bar', color: '#2b3b63', barWidth: 20, data: [0.88, 0.92, 0.86, 0.90, 0.84],
         itemStyle: { borderRadius: [6, 6, 0, 0], color: '#2b3b63' } },
-      { name: '出口额', type: 'bar', barWidth: 20, data: [0.98, 1.05, 1.12, 1.18, 1.24],
+      { name: '出口额', type: 'bar', color: '#f6a821', barWidth: 20, data: [0.98, 1.05, 1.12, 1.18, 1.24],
         itemStyle: { borderRadius: [6, 6, 0, 0], color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#f6a821' }, { offset: 1, color: '#ff5e3a' }]) } }
     ]
   });
@@ -410,7 +410,7 @@
     xAxis: { ...PP_CHART_THEME.xAxis, data: monthLabels(2024, 1, 31) },
     yAxis: { ...PP_CHART_THEME.yAxis, name: '美元/吨', nameTextStyle: { color: '#6b7893' } },
     series: [{
-      name: '乙烯-石脑油价差', type: 'bar', barWidth: '52%',
+      name: '乙烯-石脑油价差', type: 'bar', color: '#f6a821', barWidth: '52%',
       data: spread,
       itemStyle: {
         borderRadius: [4, 4, 0, 0],
@@ -420,8 +420,8 @@
       },
       markLine: {
         symbol: 'none', silent: true,
-        lineStyle: { color: 'rgba(255,255,255,.55)', type: 'dashed', width: 1.2 },
-        label: { formatter: '盈亏平衡 350', color: '#eef2fb', fontSize: 11, position: 'insideEndTop' },
+        lineStyle: { color: 'rgba(246,168,33,.85)', type: 'dashed', width: 1.4 },
+        label: { formatter: '盈亏平衡 350', color: '#f6a821', fontSize: 11, position: 'insideEndTop' },
         data: [{ yAxis: 350 }]
       }
     }]

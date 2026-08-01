@@ -70,6 +70,7 @@
           <p id="sbDesc"></p>
           <div class="stat2" id="sbStats"></div>
           <ul id="sbTags"></ul>
+          <a id="sbSpaceBtn" class="btn btn-ghost" style="display:none;width:100%;justify-content:center;margin-top:16px" href="#">进入品种空间 →</a>
         </div>
       </div>
     </aside>
@@ -122,7 +123,7 @@
 
   const NODES = [
     /* L1 原料 */
-    { id: 'crude',  layer: 'feed', name: '原油', en: 'Crude Oil', desc: '全球大宗商品之王,炼化产业链的源头。中国对外依存度约 72%,主要进口来源为中东、俄罗斯与南美,2025 年进口约 5.4 亿吨。', stats: [['72%', '对外依存度'], ['5.42', '2025 进口(亿吨)']], tags: ['布伦特 / WTI', 'OPEC+', '地缘溢价'] },
+    { id: 'crude',  layer: 'feed', name: '原油', spaceKey: 'sc', en: 'Crude Oil', desc: '全球大宗商品之王,炼化产业链的源头。中国对外依存度约 72%,主要进口来源为中东、俄罗斯与南美,2025 年进口约 5.4 亿吨。', stats: [['72%', '对外依存度'], ['5.42', '2025 进口(亿吨)']], tags: ['布伦特 / WTI', 'OPEC+', '地缘溢价'] },
     { id: 'gas',    layer: 'feed', name: '天然气', en: 'Natural Gas', desc: '乙烷裂解的优质原料。页岩气革命大幅降低乙烷价格,重塑了全球乙烯的成本曲线,美国借此崛起为乙烯净出口国。', stats: [['38%', '全球乙烯产能占比(乙烷)'], ['$180', '乙烷裂解成本优势(美元/吨)']], tags: ['乙烷裂解', 'LNG', '页岩气'] },
     { id: 'coal',   layer: 'feed', name: '煤', en: 'Coal', desc: '中国「富煤」禀赋催生了煤制烯烃(MTO)、煤制油、煤制乙二醇等独特路径,煤化工占中国化工品供给的重要份额。', stats: [['60%+', '甲醇产能占比(煤基)'], ['8.3', '煤化工占化工总产值(万亿元)']], tags: ['煤制烯烃 MTO', '气流床气化'] },
 
@@ -134,22 +135,22 @@
     { id: 'gasifier',layer:'proc', name: '煤气化制合成气', en: 'Coal Gasification', desc: '煤在高温高压下与水蒸气反应生成合成气(CO+H₂),经变换与净化后制甲醇、合成氨等碳一产品。', stats: [['3000+', '单台日投煤量(吨)'], ['~90%', '碳转化率']], tags: ['水煤浆', '航天炉 / GSP'] },
 
     /* L3 基础化学品 */
-    { id: 'ethylene',layer:'base', name: '乙烯', en: 'Ethylene C₂H₄', desc: '全球产量最大的基础化工产品,石化工业的基石,下游覆盖聚乙烯、乙二醇、苯乙烯、环氧乙烷等大宗产品。', stats: [['48.8', '中国产能(Mt/a)'], ['32.5%', '全球占比']], tags: ['三大烯烃之首', '景气风向标'] },
-    { id: 'propylene',layer:'base', name: '丙烯', en: 'Propylene C₃H₆', desc: '第二大烯烃,聚丙烯的直接原料,同时用于丙烯腈、环氧丙烷、丙烯酸等衍生品,是炼化与 PDH 装置的重要利润来源。', stats: [['52.6', '中国产能(Mt/a)'], ['78.5%', '开工率']], tags: ['聚丙烯', 'PDH', '油制 / 煤制'] },
+    { id: 'ethylene',layer:'base', name: '乙烯', en: 'Ethylene C₂H₄', spaceKey: 'ethylene', desc: '全球产量最大的基础化工产品,石化工业的基石,下游覆盖聚乙烯、乙二醇、苯乙烯、环氧乙烷等大宗产品。', stats: [['48.8', '中国产能(Mt/a)'], ['32.5%', '全球占比']], tags: ['三大烯烃之首', '景气风向标'] },
+    { id: 'propylene',layer:'base', name: '丙烯', en: 'Propylene C₃H₆', spaceKey: 'propylene', desc: '第二大烯烃,聚丙烯的直接原料,同时用于丙烯腈、环氧丙烷、丙烯酸等衍生品,是炼化与 PDH 装置的重要利润来源。', stats: [['52.6', '中国产能(Mt/a)'], ['78.5%', '开工率']], tags: ['聚丙烯', 'PDH', '油制 / 煤制'] },
     { id: 'bd',     layer: 'base', name: '丁二烯', en: 'Butadiene C₄H₆', desc: '合成橡胶的关键单体,与苯乙烯共聚制丁苯橡胶(SBR),亦用于 ABS 树脂与己二腈。', stats: [['5.6', '中国产能(Mt/a)'], ['68%', '合成橡胶原料占比']], tags: ['顺丁橡胶', 'SBR', 'ABS'] },
-    { id: 'btx',    layer: 'base', name: '苯', en: 'Benzene C₆H₆', desc: '芳烃之基,经苯乙烯、己内酰胺、苯酚等路径进入塑料、尼龙与树脂世界,价格联动油市与芳烃装置负荷。', stats: [['26.4', '中国产能(Mt/a)'], ['72.8%', '开工率']], tags: ['纯苯', '重整芳烃'] },
-    { id: 'px',     layer: 'base', name: '对二甲苯 PX', en: 'Paraxylene C₈H₁₀', desc: '聚酯产业链的咽喉品种,经 PTA 一步通达涤纶纤维与 PET 瓶片,中国自给率已超 80%。', stats: [['46.2', '中国产能(Mt/a)'], ['81.3%', '开工率']], tags: ['PTA 之母', '聚酯源头'] },
-    { id: 'meoh',   layer: 'base', name: '甲醇', en: 'Methanol CH₃OH', desc: '碳一化工枢纽:既是煤制烯烃(MTO)主原料,又通往甲醛、醋酸、MTBE 与二甲醚,还兼作车船清洁燃料。', stats: [['109.6', '中国产能(Mt/a)'], ['62%', 'MTO 消费占比']], tags: ['MTO', '燃料应用', '进口依存'] },
+    { id: 'btx',    layer: 'base', name: '苯', en: 'Benzene C₆H₆', spaceKey: 'benzene', desc: '芳烃之基,经苯乙烯、己内酰胺、苯酚等路径进入塑料、尼龙与树脂世界,价格联动油市与芳烃装置负荷。', stats: [['26.4', '中国产能(Mt/a)'], ['72.8%', '开工率']], tags: ['纯苯', '重整芳烃'] },
+    { id: 'px',     layer: 'base', name: '对二甲苯 PX', en: 'Paraxylene C₈H₁₀', spaceKey: 'px', desc: '聚酯产业链的咽喉品种,经 PTA 一步通达涤纶纤维与 PET 瓶片,中国自给率已超 80%。', stats: [['46.2', '中国产能(Mt/a)'], ['81.3%', '开工率']], tags: ['PTA 之母', '聚酯源头'] },
+    { id: 'meoh',   layer: 'base', name: '甲醇', en: 'Methanol CH₃OH', spaceKey: 'ma', desc: '碳一化工枢纽:既是煤制烯烃(MTO)主原料,又通往甲醛、醋酸、MTBE 与二甲醚,还兼作车船清洁燃料。', stats: [['109.6', '中国产能(Mt/a)'], ['62%', 'MTO 消费占比']], tags: ['MTO', '燃料应用', '进口依存'] },
     { id: 'naphtha',layer: 'base', name: '石脑油', en: 'Naphtha', desc: '裂解与重整共用的轻质原料,蒸汽裂解装置的进料主力,价格紧随原油并叠加区域供需。', stats: [['$548', 'CFR 日本价(美元/吨)'], ['~40%', '裂解进料占比']], tags: ['裂解料', '重整料'] },
 
     /* L4 合成材料 */
-    { id: 'pe',     layer: 'mat',  name: '聚乙烯 PE', en: 'Polyethylene', desc: '全球用量最大的塑料,薄膜、管材、中空容器与线缆绝缘层的首选材料,分 LDPE / HDPE / LLDPE 三大牌号。', stats: [['42.5', '中国产能(Mt/a)'], ['77.9%', '开工率']], tags: ['薄膜', '管材', '注塑'] },
-    { id: 'pp',     layer: 'mat',  name: '聚丙烯 PP', en: 'Polypropylene', desc: '从无纺布口罩到汽车保险杠的万能材料,纤维、注塑、薄膜与无纺布四大消费方向均衡分布。', stats: [['36.8', '中国产能(Mt/a)'], ['79.6%', '开工率']], tags: ['无纺布', '汽车改性', '家电注塑'] },
+    { id: 'pe',     layer: 'mat',  name: '聚乙烯 PE', en: 'Polyethylene', spaceKey: 'l', desc: '全球用量最大的塑料,薄膜、管材、中空容器与线缆绝缘层的首选材料,分 LDPE / HDPE / LLDPE 三大牌号。', stats: [['42.5', '中国产能(Mt/a)'], ['77.9%', '开工率']], tags: ['薄膜', '管材', '注塑'] },
+    { id: 'pp',     layer: 'mat',  name: '聚丙烯 PP', en: 'Polypropylene', spaceKey: 'pp', desc: '从无纺布口罩到汽车保险杠的万能材料,纤维、注塑、薄膜与无纺布四大消费方向均衡分布。', stats: [['36.8', '中国产能(Mt/a)'], ['79.6%', '开工率']], tags: ['无纺布', '汽车改性', '家电注塑'] },
     { id: 'abs',    layer: 'mat',  name: 'ABS / PS', en: 'Styrenics', desc: '苯乙烯系工程塑料,ABS 兼顾强度与光泽,是家电外壳与汽车内饰的经典之选;PS 用于发泡与透明制品。', stats: [['ABS 7.9', '中国产能(Mt/a)'], ['6.2%', '消费年均增速']], tags: ['家电', '汽车内饰', '发泡'] },
     { id: 'rubber', layer: 'mat',  name: '合成橡胶', en: 'Synthetic Rubber', desc: '顺丁、丁苯、异戊等品种构成轮胎与橡胶制品的骨架,与天然橡胶互补形成完整胶料体系。', stats: [['3.2', '中国产量(Mt/a)'], ['55%', '轮胎消费占比']], tags: ['丁苯 SBR', '顺丁 BR', '轮胎'] },
-    { id: 'meg',    layer: 'mat',  name: '乙二醇 MEG', en: 'Mono-Ethylene Glycol', desc: '乙烯氧化产物,聚酯合成与防冻液的主要原料,中国仍需相当规模进口补充。', stats: [['25.4', '中国产能(Mt/a)'], ['58%', '聚酯消费占比']], tags: ['聚酯原料', '防冻液'] },
+    { id: 'meg',    layer: 'mat',  name: '乙二醇 MEG', en: 'Mono-Ethylene Glycol', spaceKey: 'eg', desc: '乙烯氧化产物,聚酯合成与防冻液的主要原料,中国仍需相当规模进口补充。', stats: [['25.4', '中国产能(Mt/a)'], ['58%', '聚酯消费占比']], tags: ['聚酯原料', '防冻液'] },
     { id: 'pet',    layer: 'mat',  name: 'PET 聚酯', en: 'PET Polyester', desc: 'PTA 与乙二醇缩聚而成,一端织成涤纶纤维,一端吹成饮料瓶片,再生 PET 回收产业方兴未艾。', stats: [['82.1', '中国产能(Mt/a)'], ['70%+', '全球纤维用量占比']], tags: ['涤纶', '瓶片', '再生 PET'] },
-    { id: 'pvc',    layer: 'mat',  name: 'PVC', en: 'Polyvinyl Chloride', desc: '建筑管材型材的主材,分电石法与乙烯法两条工艺路线,与房地产周期高度相关。', stats: [['24.1', '中国产能(Mt/a)'], ['62%', '建筑消费占比']], tags: ['管材', '型材', '电石法'] },
+    { id: 'pvc',    layer: 'mat',  name: 'PVC', en: 'Polyvinyl Chloride', spaceKey: 'v', desc: '建筑管材型材的主材,分电石法与乙烯法两条工艺路线,与房地产周期高度相关。', stats: [['24.1', '中国产能(Mt/a)'], ['62%', '建筑消费占比']], tags: ['管材', '型材', '电石法'] },
     { id: 'cp',     layer: 'mat',  name: '己内酰胺 → 锦纶', en: 'Caprolactam → Nylon 6', desc: '由苯经环己酮合成己内酰胺,再聚合为锦纶(尼龙 6)纤维与工程塑料,轻质耐磨。', stats: [['6.8', '中国产能(Mt/a)'], ['90%', '锦纶原料自给率']], tags: ['尼龙 6', '帘子布', '工程塑料'] },
 
     /* L5 终端应用 */
@@ -260,6 +261,9 @@
       `<div><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
     sbStats.style.display = n.stats ? 'grid' : 'none';
     sbTags.innerHTML = (n.tags || []).map(t => `<li>${t}</li>`).join('');
+    const btn = document.getElementById('sbSpaceBtn');
+    if (btn) btn.style.display = n.spaceKey ? 'block' : 'none';
+    if (btn && n.spaceKey) btn.setAttribute('href', 'space.html?k=' + n.spaceKey);
   }
 
   /* ---------- 图例 ---------- */

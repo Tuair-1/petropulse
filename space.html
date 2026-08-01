@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>品种空间 — PetroPulse 石化脉动</title>
+<meta name="description" content="石化品种与企业空间:实时行情、历史走势、产业链定位一站式查看。">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .sp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 960px) { .sp-grid { grid-template-columns: 1fr; } }
+  .quote-big {
+    text-align: center; padding: 34px 28px;
+    background:
+      radial-gradient(420px 200px at 50% 0%, rgba(246,168,33,.10), transparent 70%),
+      linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.008));
+  }
+  .quote-big .qpx { font-family: var(--font-num); font-size: clamp(2.6rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.1; }
+  .quote-big .qunit { font-size: 15px; color: var(--t-3); font-weight: 500; margin-left: 6px; }
+  .quote-big .qch { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; font-family: var(--font-num); font-size: 19px; font-weight: 700; padding: 5px 16px; border-radius: 999px; }
+  .quote-big .qch.up { color: var(--up); background: rgba(52,211,153,.1); }
+  .quote-big .qch.down { color: var(--down); background: rgba(248,113,113,.1); }
+  .quote-big .qmeta { margin-top: 14px; font-size: 12px; color: var(--t-3); display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  .quote-big .qmeta b { color: var(--t-2); font-weight: 600; }
+  .rel-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
+  .rel-chips a {
+    padding: 7px 15px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+    background: rgba(255,255,255,.04); border: 1px solid var(--line); color: var(--t-2);
+    transition: all .2s;
+  }
+  .rel-chips a:hover { border-color: rgba(246,168,33,.5); color: var(--amber); transform: translateY(-1px); }
+  .rel-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  @media (max-width: 560px) { .rel-mini { grid-template-columns: 1fr; } }
+  .rel-mini a {
+    display: block; padding: 14px 16px; border-radius: 12px;
+    background: rgba(255,255,255,.03); border: 1px solid var(--line-soft);
+    transition: all .2s;
+  }
+  .rel-mini a:hover { border-color: rgba(246,168,33,.4); transform: translateY(-2px); }
+  .rel-mini .rn { font-size: 12.5px; color: var(--t-2); display: flex; justify-content: space-between; }
+  .rel-mini .rv { font-family: var(--font-num); font-size: 17px; font-weight: 700; margin-top: 4px; display: flex; justify-content: space-between; align-items: baseline; }
+  .rel-mini .rc { font-size: 12px; font-weight: 700; font-family: var(--font-num); }
+  .rel-mini .rc.up { color: var(--up); } .rel-mini .rc.down { color: var(--down); }
+  .sp-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .sp-tags li { font-size: 12px; padding: 4px 12px; border-radius: 999px; background: rgba(255,255,255,.04); border: 1px solid var(--line); color: var(--t-2); }
+  .sp-404 { text-align: center; padding: 120px 0; }
+  .sp-404 h1 { font-size: 2.4rem; }
+</style>
+</head>
+<body>
+
+<!-- ================= 导航 ================= -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#111c33"/>
+        <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+        <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+      </svg>
+      <span>石化脉动<span class="en">PETROPULSE</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="market.html">市场数据</a>
+      <a href="chain.html">产业链</a>
+      <a href="about.html">关于</a>
+      <a class="btn btn-primary nav-cta" href="market.html">进入数据平台</a>
+    </div>
+    <button class="nav-burger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ================= 内容 ================= -->
+<header class="page-hero" id="spHero" style="display:none">
+  <div class="container">
+    <div class="crumbs">HOME / <b>SPACE</b> / <span id="spCrumb"></span></div>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <span class="eyebrow" id="spCat" style="text-transform:none"></span>
+      <span style="font-size:12px;color:var(--t-3)" id="spEn"></span>
+    </div>
+    <h1 id="spName"></h1>
+    <p class="sec-sub" style="margin-top:12px" id="spDesc"></p>
+  </div>
+</header>
+
+<section class="block" style="padding-top:10px">
+  <div class="container">
+    <div id="spBody"></div>
+    <div id="sp404" class="sp-404" style="display:none">
+      <h1>未知的空间 <span class="text-grad">404</span></h1>
+      <p style="color:var(--t-3);margin:14px 0 26px">没有找到对应的品种或企业,可能链接已失效。</p>
+      <a class="btn btn-primary" href="index.html">返回首页</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 页脚 ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:6px">
+          <svg viewBox="0 0 64 64" width="28" height="28" fill="none" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#111c33"/>
+            <path d="M32 9c8 12 14 19 14 28a14 14 0 0 1-28 0c0-9 6-16 14-28z" fill="#f6a821"/>
+            <path d="M32 22c4 6 7 9.5 7 14a7 7 0 0 1-14 0c0-4.5 3-8 7-14z" fill="#0a1120" opacity=".85"/>
+          </svg>
+          <span>石化脉动<span class="en">PETROPULSE</span></span>
+        </a>
+        <p class="desc">以数据视角感知石化产业脉搏 —— 行情、产业链、企业动态与绿色转型,一站尽览。</p>
+      </div>
+      <div><h5>快速导航</h5><ul><li><a href="index.html">首页</a></li><li><a href="market.html">市场数据</a></li><li><a href="chain.html">产业链</a></li><li><a href="about.html">关于本站</a></li></ul></div>
+      <div><h5>数据平台</h5><ul><li><a href="market.html">原油价格走势</a></li><li><a href="market.html">化工品价格对比</a></li><li><a href="market.html">产能与贸易结构</a></li><li><a href="chain.html">产业链图谱</a></li></ul></div>
+      <div><h5>关于本站</h5><ul><li><a href="about.html">项目缘起</a></li><li><a href="about.html">技术架构</a></li><li><a href="about.html">数据声明</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PetroPulse 石化脉动 · 由 Claude Code 生成</span>
+      <span class="warn">本站行情与统计数据均为演示样例,不构成任何投资建议</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/echarts.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+/* ================= 空间内容配置 ================= */
+const SPACE_DEFS = {
+
+  /* ---------- 原油与能源 ---------- */
+  brent: { nm: '布伦特原油', en: 'Brent Crude Oil', cat: '国际原油', color: '#f6a821', hist: 'brent',
+    desc: '全球最重要的原油定价基准,约三分之二的国际原油贸易以其计价。北海布伦特与迪拜、WTI 共同构成全球油价的三大锚。',
+    tags: ['ICE 期货', '欧佩克+', '地缘溢价', '全球定价锚'],
+    related: ['wti', 'sc', 'eb', 'px'] },
+  wti: { nm: 'WTI 原油', en: 'West Texas Intermediate', cat: '国际原油', color: '#2dd4f8', hist: 'wti',
+    desc: '美国西得克萨斯中质原油,NYMEX 期货合约标的,北美市场的定价基准,与布伦特的价差反映大西洋两岸供需强弱。',
+    tags: ['NYMEX', '库欣交割', '页岩油'],
+    related: ['brent', 'sc', 'l', 'pp'] },
+  sc: { nm: '原油期货 SC', en: 'INE Crude Oil', cat: '国内原油', color: '#fb923c', hist: 'sc',
+    desc: '上海国际能源交易中心(INE)上市的原油期货,以人民币计价,是国内炼化与套保的核心工具,价格联动国际油价并反映人民币汇率与国内供需。',
+    tags: ['INE', '人民币计价', '夜盘交易', '炼厂套保'],
+    related: ['brent', 'wti', 'ur', 'ta'] },
+
+  /* ---------- 基础化学品 ---------- */
+  ethylene: { nm: '乙烯 CIF', en: 'Ethylene C₂H₄', cat: '基础化学品 · 烯烃', color: '#f6a821', hist: null,
+    desc: '三大合成材料之母,经聚合制聚乙烯,亦制乙二醇、苯乙烯、环氧乙烷。全球无乙烯期货,现货报价(CIF 东北亚)为演示参考,实际价格可观察下游聚乙烯与乙二醇期货的联动。',
+    tags: ['CIF 东北亚', '演示数据', '无期货品种'],
+    related: ['l', 'eg', 'eb', 'propylene'] },
+  propylene: { nm: '丙烯', en: 'Propylene C₃H₆', cat: '基础化学品 · 烯烃', color: '#2dd4f8', hist: null,
+    desc: '第二大烯烃,聚丙烯的直接原料,亦用于丙烯腈、环氧丙烷、丙烯酸。现货基准价来自生意社每日报价,与聚丙烯期货高度联动。',
+    tags: ['生意社基准价', '日更现货', 'PDH 原料'],
+    related: ['pp', 'ethylene', 'eg', 'eb'] },
+  benzene: { nm: '纯苯', en: 'Benzene C₆H₆', cat: '基础化学品 · 芳烃', color: '#34d399', hist: null,
+    desc: '芳烃之基,经苯乙烯、己内酰胺、苯酚等路径进入塑料、尼龙与树脂世界。现货基准价来自生意社每日报价,与苯乙烯期货价差是芳烃链景气度的重要信号。',
+    tags: ['生意社基准价', '日更现货', '重整芳烃'],
+    related: ['eb', 'px', 'cp', 'ma'] },
+  px: { nm: '对二甲苯 PX', en: 'Paraxylene C₈H₁₀', cat: '基础化学品 · 芳烃', color: '#c084fc', hist: 'px',
+    desc: '聚酯产业链的咽喉品种,经 PTA 一步通达涤纶纤维与 PET 瓶片。2023 年 9 月郑商所上市 PX 期货,弥补了聚酯链套保的空缺,价格实时可查。',
+    tags: ['郑商所期货', '2023 上市', 'PTA 之母', '聚酯源头'],
+    related: ['ta', 'benzene', 'eg', 'l'] },
+  ma: { nm: '甲醇', en: 'Methanol CH₃OH', cat: '碳一化工', color: '#fb923c', hist: 'ma',
+    desc: '碳一化工枢纽:煤制烯烃(MTO)主原料,亦制甲醛、醋酸、MTBE,兼作车船清洁燃料。郑商所甲醇期货是国内化工品成交最活跃的品种之一。',
+    tags: ['郑商所期货', 'MTO', '煤化工', '清洁燃料'],
+    related: ['l', 'pp', 'ur', 'ta'] },
+  eb: { nm: '苯乙烯 EB', en: 'Styrene C₈H₈', cat: '中间体', color: '#fb923c', hist: 'eb',
+    desc: '苯与乙烯的缩合产物,是 ABS、PS、EPS 三大塑料的源头,也是芳烃链利润的集散地。大商所苯乙烯期货真实反映这条链的景气。',
+    tags: ['大商所期货', 'ABS/PS 源头', '芳烃链利润'],
+    related: ['benzene', 'ethylene', 'l', 'v'] },
+
+  /* ---------- 合成材料 ---------- */
+  l: { nm: '聚乙烯 L', en: 'LLDPE', cat: '合成材料 · 塑料', color: '#f6a821', hist: 'l',
+    desc: '全球用量最大的塑料品种,薄膜、管材、中空容器的首选材料。大商所 LLDPE 期货(L)是塑料行情的风向标,与原油和乙烯成本联动。',
+    tags: ['大商所期货', '薄膜', '管材', '塑料风向标'],
+    related: ['pp', 'ethylene', 'v', 'ma'] },
+  pp: { nm: '聚丙烯 PP', en: 'Polypropylene', cat: '合成材料 · 塑料', color: '#2dd4f8', hist: 'pp',
+    desc: '从无纺布口罩到汽车保险杠的万能材料。大商所 PP 期货成交活跃,煤制、油制、PDH 三路产能的博弈尽在其中。',
+    tags: ['大商所期货', '无纺布', '汽车改性', '注塑'],
+    related: ['propylene', 'l', 'ma', 'eb'] },
+  v: { nm: 'PVC', en: 'Polyvinyl Chloride', cat: '合成材料 · 塑料', color: '#34d399', hist: 'v',
+    desc: '建筑管材型材的主材,分电石法与乙烯法两条路线,与房地产周期高度相关。大商所 PVC 期货是国内最早上市的化工期货之一。',
+    tags: ['大商所期货', '电石法', '建筑建材'],
+    related: ['l', 'ma', 'eb', 'pp'] },
+  eg: { nm: '乙二醇 EG', en: 'Mono-Ethylene Glycol', cat: '合成材料 · 聚酯', color: '#c084fc', hist: 'eg',
+    desc: '乙烯氧化产物,聚酯合成与防冻液的主要原料,中国仍需进口补充。大商所乙二醇期货与 PTA、PX 构成聚酯链的三大交易品种。',
+    tags: ['大商所期货', '聚酯原料', '防冻液'],
+    related: ['ta', 'px', 'ethylene', 'l'] },
+  ur: { nm: '尿素', en: 'Urea', cat: '化肥', color: '#34d399', hist: 'ur',
+    desc: '全球最大氮肥品种,亦用于车用尿素(SCR)与脲醛树脂。郑商所尿素期货的波动直接牵动三农成本与农业政策。',
+    tags: ['郑商所期货', '氮肥', '车用尿素', '农业'],
+    related: ['ma', 'sc', 'ta', 'pp'] },
+  ta: { nm: 'PTA', en: 'Pure Terephthalic Acid', cat: '聚酯原料', color: '#f6a821', hist: 'ta',
+    desc: '精对苯二甲酸,PX 的直接下游、涤纶产业链的枢纽。郑商所 PTA 期货是全球化工品成交量之王,聚酯链景气的第一观察窗口。',
+    tags: ['郑商所期货', '涤纶源头', '聚酯链枢纽'],
+    related: ['px', 'eg', 'l', 'ma'] },
+
+  /* ---------- 企业 ---------- */
+  sinopec: { nm: '中国石化', en: 'SINOPEC', cat: '央企 · 炼化一体化龙头', color: '#f6a821', hist: null, company: true,
+    desc: '全球最大的炼油与化工综合企业之一,炼化一体化程度行业领先,拥有镇海、燕山、扬子等世界级炼化基地,成品油销售网络覆盖全国。',
+    tags: ['A+H 上市', '炼化一体化', '油品销售'],
+    related: ['sc', 'l', 'pp', 'v', 'benzene'] },
+  petrochina: { nm: '中国石油', en: 'PetroChina', cat: '央企 · 上中下游全能', color: '#2dd4f8', hist: null, company: true,
+    desc: '国内最大的油气生产商,勘探开发与炼化销售并重,拥有塔里木、长庆等主力油气田与独山子、广东石化等大型炼化基地。',
+    tags: ['A+H 上市', '上游勘探', '西气东输'],
+    related: ['sc', 'brent', 'l', 'pp'] },
+  cnooc: { nm: '中国海油', en: 'CNOOC', cat: '央企 · 海上油气巨头', color: '#34d399', hist: null, company: true,
+    desc: '中国最大的海上油气生产商,深海油气开发能力全球领先,桶油成本处于行业低位,深海一号等大国重器是其名片。',
+    tags: ['A+H 上市', '深海油气', '低成本桶油'],
+    related: ['sc', 'brent', 'wti'] },
+  hengli: { nm: '恒力石化', en: 'Hengli', cat: '民营 · 炼化一体化标杆', color: '#fb923c', hist: null, company: true,
+    desc: '恒力 2000 万吨级炼化一体化项目开启民营大炼化时代,聚酯纤维全产业链布局,长丝产能全球第一。',
+    tags: ['民营炼化', '聚酯纤维', '长丝龙头'],
+    related: ['px', 'ta', 'benzene', 'eg'] },
+  rongsheng: { nm: '荣盛石化', en: 'Rongsheng', cat: '民营 · 聚酯产业链龙头', color: '#c084fc', hist: null, company: true,
+    desc: '浙石化 4000 万吨级炼化基地是最大民营炼化项目,从炼油到 PX、PTA、聚酯、织造的垂直一体化布局完整。',
+    tags: ['浙石化', 'PX/PTA 一体化', '聚酯龙头'],
+    related: ['px', 'ta', 'ma'] },
+  wanhua: { nm: '万华化学', en: 'Wanhua', cat: '化工新材料典范', color: '#f6a821', hist: null, company: true,
+    desc: '全球 MDI 龙头,从异氰酸酯到石化产业链延伸,烟台、宁波、匈牙利三大基地并进,新材料业务占比持续提升。',
+    tags: ['MDI 全球第一', '新材料', '全球化布局'],
+    related: ['benzene', 'pp', 'v', 'l'] },
+  satellite: { nm: '卫星化学', en: 'Satellite', cat: '民营 · C3 产业链领先', color: '#2dd4f8', hist: null, company: true,
+    desc: '以丙烷脱氢(PDH)为核心贯通 C3 全产业链,乙烷裂解装置落地后 C2 链再添新翼,轻烃一体化路线独树一帜。',
+    tags: ['PDH', '轻烃一体化', '乙烷裂解'],
+    related: ['propylene', 'ethylene', 'eg'] },
+  shenghong: { nm: '东方盛虹', en: 'Eastern Shenghong', cat: '民营 · 炼化新秀', color: '#34d399', hist: null, company: true,
+    desc: '盛虹炼化 1600 万吨级一体化项目投产,化工品收率行业领先,聚焦新能源材料(光伏级 EVA 等)差异化发展。',
+    tags: ['盛虹炼化', 'EVA 光伏料', '化工品收率'],
+    related: ['px', 'ta', 'eb'] }
+};
+
+/* ================= 渲染 ================= */
+const params = new URLSearchParams(location.search);
+const key = params.get('k');
+const def = SPACE_DEFS[key];
+const body = document.getElementById('spBody');
+const hero = document.getElementById('spHero');
+let chart = null;
+let currentState = null;
+
+if (!def) {
+  document.getElementById('sp404').style.display = 'block';
+} else {
+  hero.style.display = 'block';
+  document.title = `${def.nm} — PetroPulse 石化脉动`;
+  document.getElementById('spCrumb').textContent = def.nm;
+  document.getElementById('spCat').textContent = def.cat;
+  document.getElementById('spCat').style.color = def.color;
+  document.getElementById('spEn').textContent = def.en;
+  document.getElementById('spName').textContent = def.nm;
+  document.getElementById('spDesc').textContent = def.desc;
+  document.title = def.nm + ' — PetroPulse 石化脉动';
+
+  /* 关联品种映射 */
+  const relLinks = (keys) => keys.map(k => {
+    const d = SPACE_DEFS[k];
+    return d ? `<a href="space.html?k=${k}">${d.nm}</a>` : '';
+  }).join('');
+
+  /* 企业空间:关联品种实时行情卡 */
+  if (def.company) {
+    body.innerHTML = `
+      <div class="sp-grid">
+        <div class="panel">
+          <span class="eyebrow">Profile</span>
+          <h2 class="sec-title" style="font-size:1.5rem">企业档案</h2>
+          <p style="color:var(--t-2);margin-top:12px">${def.desc}</p>
+          <ul class="sp-tags">${(def.tags || []).map(t => `<li>${t}</li>`).join('')}</ul>
+          <div class="rel-chips">关联品种:${relLinks(def.related)}</div>
+        </div>
+        <div class="panel">
+          <span class="eyebrow">Live Market</span>
+          <h2 class="sec-title" style="font-size:1.5rem">关联品种实时行情</h2>
+          <div class="rel-mini" id="relQuotes"></div>
+          <p class="note-demo">行情每 5 分钟自动刷新,数据源见顶部徽章。</p>
+        </div>
+      </div>`;
+  } else {
+    /* 品种空间:行情大卡 + 日K */
+    body.innerHTML = `
+      <div class="sp-grid">
+        <div class="panel quote-big">
+          <div style="font-size:12.5px;color:var(--t-3);letter-spacing:.14em;margin-bottom:10px">实时行情</div>
+          <div class="qpx" id="qpx">--</div>
+          <div class="qch" id="qch" style="display:inline-flex"></div>
+          <div class="qmeta">
+            <span>单位 <b id="qunit">--</b></span>
+            <span>数据源 <b id="qsrc">--</b></span>
+            <span id="qtime"></span>
+          </div>
+        </div>
+        <div class="panel">
+          <span class="eyebrow">Profile</span>
+          <h2 class="sec-title" style="font-size:1.5rem">品种档案</h2>
+          <p style="color:var(--t-2);margin-top:12px">${def.desc}</p>
+          <ul class="sp-tags">${(def.tags || []).map(t => `<li>${t}</li>`).join('')}</ul>
+          <div class="rel-chips">关联品种:${relLinks(def.related)}</div>
+        </div>
+      </div>
+      ${def.hist ? '<div class="panel" style="margin-top:24px"><div class="chart-head"><div><h3>近一年价格走势</h3><div class="tag" id="spChartTag">实时日K</div></div></div><div id="spChart" class="chart" style="height:380px"></div></div>' : ''}`;
+  }
+}
+
+/* 行情刷新(pp:quotes 事件由 main.js 每 5 分钟触发) */
+function renderQuote(state) {
+  currentState = state;
+  const q = state.quotes.find(x => x.key === key);
+  if (q && !def.company) {
+    document.getElementById('qpx').textContent = q.px.toLocaleString('zh-CN', { maximumFractionDigits: 2 });
+    document.getElementById('qunit').textContent = q.unit;
+    const qch = document.getElementById('qch');
+    const isDemo = q.src === 'demo' || q.live === false;
+    qch.className = 'qch ' + (q.ch >= 0 ? 'up' : 'down');
+    qch.innerHTML = `${q.ch >= 0 ? '▲' : '▼'} ${Math.abs(q.ch).toFixed(2)}%${isDemo ? '<span class="demo-chip" title="演示数据" style="margin-left:8px">演</span>' : ''}`;
+    document.getElementById('qsrc').textContent = isDemo ? '演示数据' : (q.src === '100ppi' ? '生意社现货' : q.src.toUpperCase());
+    document.getElementById('qtime').textContent = q.tradeTime ? `行情时间 ${q.tradeTime}` : (q.tradeDate ? `报价日期 ${q.tradeDate}` : '');
+  }
+  /* 企业空间:关联品种卡片 */
+  if (def.company && def.related) {
+    const box = document.getElementById('relQuotes');
+    if (box) {
+      box.innerHTML = def.related.map(k => {
+        const q = state.quotes.find(x => x.key === k);
+        const d = SPACE_DEFS[k];
+        if (!q || !d) return '';
+        const isDemo = q.src === 'demo' || q.live === false;
+        return `<a href="space.html?k=${k}">
+          <div class="rn"><span>${d.nm}</span>${isDemo ? '<span class="demo-chip">演</span>' : ''}</div>
+          <div class="rv"><span>${q.px.toLocaleString('zh-CN', { maximumFractionDigits: 2 })} <span style="font-size:11px;color:var(--t-3)">${q.unit}</span></span>
+          <span class="rc ${q.ch >= 0 ? 'up' : 'down'}">${q.ch >= 0 ? '▲' : '▼'} ${Math.abs(q.ch).toFixed(2)}%</span></div>
+        </a>`;
+      }).join('');
+    }
+  }
+  /* 日K图 */
+  if (def.hist) {
+    const h = state.history[def.hist];
+    if (h && h.labels && h.labels.length > 1) {
+      const N = Math.min(260, h.labels.length);
+      if (!chart) chart = echarts.init(document.getElementById('spChart'));
+      chart.setOption({
+        ...PP_CHART_THEME,
+        animationDuration: 500,
+        grid: { ...PP_CHART_THEME.grid, top: 20 },
+        xAxis: { ...PP_CHART_THEME.xAxis, data: h.labels.slice(-N), boundaryGap: false },
+        yAxis: { ...PP_CHART_THEME.yAxis, name: q ? q.unit : '', nameTextStyle: { color: '#6b7893' } },
+        tooltip: { ...PP_CHART_THEME.tooltip },
+        series: [{
+          name: def.nm, type: 'line', color: def.color, smooth: true, symbol: 'none',
+          data: h.values.slice(-N),
+          lineStyle: { width: 2.4, color: def.color },
+          areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: def.color + '38' }, { offset: 1, color: def.color + '00' }
+          ]) },
+          markPoint: {
+            data: [{ type: 'max', name: '阶段高点' }, { type: 'min', name: '阶段低点' }],
+            symbolSize: 42,
+            label: { color: def.color === '#f6a821' ? '#7c4a03' : '#0a1120', fontSize: 10, fontWeight: 700 },
+            itemStyle: { color: def.color }
+          }
+        }]
+      }, true);
+      const tag = document.getElementById('spChartTag');
+      if (tag) tag.textContent = `实时日K · ${h.labels[h.labels.length - N]} — ${h.labels[h.labels.length - 1]}`;
+    }
+  }
+}
+
+window.addEventListener('pp:quotes', e => renderQuote(e.detail));
+window.addEventListener('resize', () => chart && chart.resize());
+</script>
+</body>
+</html>
