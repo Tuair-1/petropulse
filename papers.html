@@ -301,7 +301,7 @@
       await PP_AI.chatStream(
         [{ role: 'system', content: SYS_FINAL }, { role: 'user', content: `以下是该论文的完整原文,请整合输出最终纠错报告:\n\n${parsedText.slice(0, 60000)}` }],
         {
-          maxTokens: 16000,
+          maxTokens: 100000,
           onReasoning: d => { reasoningBuf += d; thinking.textContent = reasoningBuf.slice(-1200); thinking.scrollTop = thinking.scrollHeight; },
           onDelta: d => {
             finalBuf += d;
