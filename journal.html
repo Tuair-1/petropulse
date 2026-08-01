@@ -73,10 +73,13 @@
     </div>
     <h1>学报洞察</h1>
     <p class="sec-sub" style="margin-top:14px">实时爬取石化领域专业学报的最新论文,由 AI 自动生成导读、标注研究领域,并按 <b class="hl">陆上/海上 × 浅层/深层</b> 四维分类,洞察学术前沿。</p>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;align-items:center">
       <a class="btn btn-primary" href="interpret.html">📄 专业论文解读(Word / PDF)</a>
       <a class="btn btn-ghost" href="papers.html">🎓 大学生论文诊断</a>
+      <button class="btn btn-ghost" id="btnCrawl">🔄 立即爬取新论文</button>
+      <span id="crawlStatus" style="font-size:12.5px;color:var(--t-3)"></span>
     </div>
+    <p style="font-size:12px;color:var(--t-3);margin-top:10px">点击后触发服务器端自动爬取:抓取网上最新的石化类论文与尚未收录的往期论文,<b style="color:var(--t-2)">自审核去重</b>保证同一篇论文不会重复收录。首次使用需配置一个 GitHub 触发令牌(仅 Actions 权限,存在你本机浏览器)。每日 06:17 与 18:17 也会自动执行。</p>
   </div>
 </header>
 
@@ -233,6 +236,72 @@
     document.querySelectorAll('#quadrantPills .pill').forEach(p => p.classList.remove('on'));
     btn.classList.add('on');
     applyFilter(btn.dataset.f);
+  });
+
+  /* ---------- 一键爬取新论文(触发 GitHub Actions) ---------- */
+  const crawlBtn = document.getElementById('btnCrawl');
+  const crawlStatus = document.getElementById('crawlStatus');
+  const CRAWL_API = 'https://api.github.com/repos/Tuair-1/petropulse/actions/workflows/update-journals.yml/dispatches';
+
+  async function fetchUpdatedAt() {
+    try {
+      const r = await fetch('data/journal.json?t=' + Date.now(), { cache: 'no-store' });
+      if (!r.ok) return null;
+      const j = await r.json();
+      return j.updated_at;
+    } catch { return null; }
+  }
+
+  crawlBtn.addEventListener('click', async () => {
+    let token = localStorage.getItem('pp_gh_token');
+    if (!token) {
+      const input = prompt(
+        '需要配置一个 GitHub 触发令牌(仅用于触发爬取,最低权限)。\n\n创建步骤:\n' +
+        '1. 打开 https://github.com/settings/tokens?type=beta\n' +
+        '2. Generate new token(创建 Fine-grained token)\n' +
+        '3. Repository access 选「Only select repositories」→ 勾选 petropulse\n' +
+        '4. Permissions → Actions → 选 Read and write\n' +
+        '5. Generate token,复制粘贴到这里:\n\n' +
+        '(令牌仅保存在你本机浏览器 localStorage,不会上传到任何服务器)'
+      );
+      if (!input) return;
+      token = input.trim();
+      if (!token) return;
+      localStorage.setItem('pp_gh_token', token);
+    }
+    crawlBtn.classList.add('busy');
+    crawlStatus.textContent = '正在启动爬取任务…';
+    try {
+      const r = await fetch(CRAWL_API, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ref: 'main' })
+      });
+      if (r.status === 204) {
+        crawlStatus.textContent = '✅ 爬取任务已启动:抓取新论文 + AI 分析 + 去重,约 2-5 分钟,完成后自动刷新…';
+        const before = await fetchUpdatedAt();
+        for (let i = 0; i < 15; i++) {
+          await new Promise(res => setTimeout(res, 20000));
+          const now = await fetchUpdatedAt();
+          if (now && now !== before) {
+            await load();
+            crawlStatus.textContent = '✅ 爬取完成,数据已更新(新增论文位于列表顶部)';
+            return;
+          }
+          crawlStatus.textContent = `⏳ 爬取进行中(已等待 ${(i + 1) * 20}s)…`;
+        }
+        crawlStatus.textContent = '⏱ 等待超时:可能未发现新论文或任务仍在运行,可稍后刷新页面查看。';
+      } else if (r.status === 401 || r.status === 403) {
+        crawlStatus.textContent = '❌ 令牌无效或无权限,请重新配置';
+        localStorage.removeItem('pp_gh_token');
+      } else {
+        crawlStatus.textContent = '❌ 启动失败 (HTTP ' + r.status + ')';
+      }
+    } catch (e) {
+      crawlStatus.textContent = '❌ 网络错误:' + e.message;
+    } finally {
+      crawlBtn.classList.remove('busy');
+    }
   });
 
   load();

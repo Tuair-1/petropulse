@@ -18,8 +18,9 @@ const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/
 const API_KEY = process.env.DEEPSEEK_API_KEY || '';
 const MODEL = process.env.AI_MODEL || 'deepseek-v4-flash';
 const API_BASE = 'https://api.deepseek.com';
-const BATCH_SIZE = 6;      // AI 分批篇数(推理模型 token 占用大,取 8 稳妥)
-const MAX_PER_SOURCE = 50; // 单源最多篇数
+const BATCH_SIZE = 6;       // AI 分批篇数(推理模型 token 占用大,取 6 稳妥)
+const MAX_PER_SOURCE = 300; // 单源最多篇数(历史累积)
+const ISSUES_BACK = 8;      // 石油实验地质向历史回溯期数(抓取"未爬取的其他论文")
 
 /* ---------- 工具 ---------- */
 async function fetchText(url, headers = {}, timeoutMs = 25000) {
@@ -38,16 +39,20 @@ const strip = s => (s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(
 const BAD_TITLES = /^(目次|目录|封面|封底|总目录|会讯|征稿|期刊介绍|广告|编委|理事会|欢迎订阅|封面人物|卷首语|序言|序|致谢|更正|勘误|新闻|简讯)/;
 
 /* ============ 源 1: 化工学报(founderss 方正系统) ============ */
-async function crawlFounderss(src) {
+async function crawlFounderss(src, isDup) {
   const home = await fetchText(src.home);
   const ids = [...new Set([...home.matchAll(/\/zh\/article\/(\d+)\//g)].map(m => m[1]))].slice(0, MAX_PER_SOURCE);
   const out = [];
+  let dup = 0;
   for (const id of ids) {
     try {
       const html = await fetchText(src.articleBase + id + '/');
       const grab = re => { const m = html.match(re); return m ? m[1].trim() : null; };
       const title = grab(/citation_title" content="([^"]*)/) || grab(/<title>([^<]*)/) || '';
       if (!title || BAD_TITLES.test(title)) continue;
+      const doi = (grab(/citation_doi" content="([^"]*)/) || grab(/"doi":"([^"]*)/) || '').trim() || null;
+      const url = src.articleBase + id + '/';
+      if (isDup({ url, doi, title })) { dup++; continue; }
       const authors = [...html.matchAll(/citation_author" content="([^"]+)/g)].map(m => m[1]);
       const absZh = html.match(/"abstractsZh"[^>]*>([\s\S]*?)<\/div>/);
       out.push({
@@ -57,22 +62,22 @@ async function crawlFounderss(src) {
         year: grab(/citation_year" content="([^"]*)/),
         volume: grab(/citation_volume" content="([^"]*)/),
         issue: grab(/citation_issue" content="([^"]*)/),
-        doi: (grab(/citation_doi" content="([^"]*)/) || grab(/"doi":"([^"]*)/) || '').trim() || null,
-        url: src.articleBase + id + '/',
+        doi, url,
         abstract: absZh ? strip(absZh[1]).slice(0, 500) : (grab(/name="description" content="([^"]*)/) || '').slice(0, 500),
         source: src.id
       });
     } catch { /* 单篇失败跳过 */ }
   }
-  return out;
+  return { out, dup };
 }
 
-/* ============ 源 2: 石油实验地质(当期 + 前 2 期) ============ */
-async function crawlSysydz(src) {
+/* ============ 源 2: 石油实验地质(当期 + 回溯 ISSUES_BACK 期) ============ */
+async function crawlSysydz(src, isDup) {
   const out = [];
   let url = src.currentUrl;
   const seen = new Set();
-  for (let issue = 0; issue < 3 && url && out.length < MAX_PER_SOURCE; issue++) {
+  let dup = 0;
+  for (let issue = 0; issue < ISSUES_BACK && url && out.length < MAX_PER_SOURCE; issue++) {
     let html;
     try { html = await fetchText(url); } catch (e) { console.error(`[crawl] ${src.name} 期次失败: ${e.message}`); break; }
     /* 列表条目:标题链接 + 作者 + 摘要 */
@@ -82,30 +87,34 @@ async function crawlSysydz(src) {
       const href = b[1];
       const title = strip(b[2]);
       if (!href || !title || BAD_TITLES.test(title) || seen.has(href)) continue;
-      /* 在条目块内再提取作者与摘要 */
-      const block = b[0];
-      const authorMatch = block.match(/article-list-author[^>]*>([\s\S]*?)<\/div>/);
-      const absMatch = block.match(/search-article-abstract[^>]*>([\s\S]*?)<\/div>/);
       seen.add(href);
-      out.push({
+      const doi = (href.match(/doi\/([^"\/]+)/) || [])[1] || null;
+      const absMatch = b[0].match(/search-article-abstract[^>]*>([\s\S]*?)<\/div>/);
+      const item = {
         title: title.slice(0, 200),
-        authors: (authorMatch ? strip(authorMatch[1]) : '').split(/[,，;；]/).map(s => s.trim()).filter(Boolean).slice(0, 12),
-        doi: (href.match(/doi\/([^"\/]+)/) || [])[1] || null,
+        doi,
         url: href.startsWith('http') ? href : src.base + href,
-        abstract: absMatch ? strip(absMatch[1]).slice(0, 500) : null,
+        abstract: absMatch ? strip(absMatch[1]).slice(0, 500) : null
+      };
+      /* 自审核去重:与历史数据比对(URL/DOI/标题指纹),重复则跳过 */
+      if (isDup(item)) { dup++; continue; }
+      const authorMatch = b[0].match(/article-list-author[^>]*>([\s\S]*?)<\/div>/);
+      out.push({
+        ...item,
+        authors: (authorMatch ? strip(authorMatch[1]) : '').split(/[,，;；]/).map(s => s.trim()).filter(Boolean).slice(0, 12),
         source: src.id,
         issue: url.match(/\/article\/([0-9]+\/[0-9]+)/)?.[1] || null
       });
       added++;
       if (out.length >= MAX_PER_SOURCE) break;
     }
-    console.log(`[crawl] ${src.name} ${url.match(/\/article\/([0-9]+\/[0-9]+)/)?.[1] || ''}: ${added} 篇`);
+    console.log(`[crawl] ${src.name} ${url.match(/\/article\/([0-9]+\/[0-9]+)/)?.[1] || ''}: 新增 ${added} 篇`);
     /* 上一期链接 */
     const prev = html.match(/href="(https?:\/\/[^"]*\/article\/[0-9]+\/[0-9]+)"[^>]*>[\s\S]{0,30}?上一期/);
     url = prev ? prev[1] : null;
     if (!url) break;
   }
-  return out;
+  return { out, dup };
 }
 
 /* ============ DeepSeek AI ============ */
@@ -163,24 +172,41 @@ const SOURCES = [
 ];
 
 const prevData = existsSync(OUT) ? (() => { try { return JSON.parse(readFileSync(OUT, 'utf8')); } catch { return null; } })() : null;
+const prevArticles = (prevData && prevData.articles) || [];
+
+/* 自审核去重:历史指纹集(URL / DOI / 归一化标题) */
+const normTitle = t => (t || '').replace(/[\s《》"'“”]/g, '').toLowerCase();
+const seenUrls = new Set(prevArticles.map(a => a.url).filter(Boolean));
+const seenDois = new Set(prevArticles.map(a => a.doi).filter(Boolean));
+const seenTitles = new Set(prevArticles.map(a => normTitle(a.title)));
+const isDup = ({ url, doi, title }) =>
+  (url && seenUrls.has(url)) || (doi && seenDois.has(doi)) || (title && seenTitles.has(normTitle(title)));
 
 const articles = [];
 const sourcesMeta = [];
 let crawlErr = null;
+let dupSkipped = 0;
 
 for (const src of SOURCES) {
   try {
-    const list = src.kind === 'founderss' ? await crawlFounderss(src) : await crawlSysydz(src);
-    articles.push(...list);
-    sourcesMeta.push({ id: src.id, name: src.name, en: src.en, issn: src.issn, count: list.length });
-    console.log(`[crawl] ${src.name}: 共 ${list.length} 篇`);
+    const r = src.kind === 'founderss' ? await crawlFounderss(src, isDup) : await crawlSysydz(src, isDup);
+    articles.push(...r.out);
+    dupSkipped += r.dup || 0;
+    sourcesMeta.push({ id: src.id, name: src.name, en: src.en, issn: src.issn, count: r.out.length });
+    console.log(`[crawl] ${src.name}: 新增 ${r.out.length} 篇,跳过重复 ${r.dup || 0} 篇`);
   } catch (e) {
     console.error(`[crawl] ${src.name} 失败: ${e.message}`);
     crawlErr = (crawlErr ? crawlErr + '; ' : '') + `${src.name}: ${e.message}`;
   }
 }
 
-/* AI 分析 */
+/* 无新增论文:保留现有数据,不写文件、不重跑洞察 */
+if (!articles.length) {
+  console.log('[no-change] 无新增论文,数据保持,跳过提交');
+  process.exit(0);
+}
+
+/* AI 分析(仅新增论文,历史论文保留原 AI 结果) */
 let aiMap = null;
 let insights = null;
 if (articles.length) {
@@ -212,12 +238,19 @@ if (articles.length) {
   }
 }
 
-/* 组装 */
+/* 组装:历史累积 + 本次新增(新在前) */
+const merged = [...articles.map((a, i) => ({ ...a, ai: aiMap ? aiMap[i] : null })), ...prevArticles];
 const payload = {
   updated_at: new Date().toISOString(),
+  daily_stats: {
+    added: articles.length,
+    skipped_dup: dupSkipped,
+    total: merged.length,
+    run_at: new Date().toISOString()
+  },
   sources: sourcesMeta,
   crawl_note: crawlErr ? `部分期刊源暂不可用: ${crawlErr}` : null,
-  articles: articles.map((a, i) => ({ ...a, ai: aiMap ? aiMap[i] : null })),
+  articles: merged,
   insights
 };
 
