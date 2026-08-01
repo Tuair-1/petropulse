@@ -242,8 +242,15 @@
     status.textContent = 'AI 思考中…';
     thinking.classList.add('on');
     thinking.textContent = '';
-    report.innerHTML = '<p style="color:var(--t-3);text-align:center;padding:60px 0">正在生成诊断报告…</p>';
+    report.innerHTML = '<p style="color:var(--t-3);text-align:center;padding:60px 0">🧠 AI 正在推理…</p>';
     let reasoningBuf = '', contentBuf = '';
+    /* 推理期进度反馈:推理模型先"思考"再输出,思考期可能 15-40 秒无正文 */
+    const thinkStart = Date.now();
+    const thinkTimer = setInterval(() => {
+      const sec = Math.round((Date.now() - thinkStart) / 1000);
+      status.textContent = `AI 推理中…已 ${sec} 秒`;
+      report.innerHTML = `<p style="color:var(--t-3);text-align:center;padding:60px 0">🧠 AI 正在思考并生成诊断报告…<br><span style="font-size:12px">推理模型会先"思考"再输出,通常 15-40 秒;开始输出后报告实时滚动显示(已 ${sec} 秒)</span></p>`;
+    }, 1000);
     try {
       await PP_AI.chatStream(
         [{ role: 'system', content: SYS }, { role: 'user', content: `以下是我的论文内容,请诊断:\n\n${text.slice(0, 8000)}` }],
@@ -251,6 +258,7 @@
           maxTokens: 6000,
           onReasoning: d => { reasoningBuf += d; thinking.textContent = reasoningBuf.slice(-1500); thinking.scrollTop = thinking.scrollHeight; },
           onDelta: d => {
+            clearInterval(thinkTimer);
             contentBuf += d;
             status.textContent = `已生成 ${contentBuf.length} 字…`;
             report.innerHTML = renderMD(contentBuf) + '<p style="color:var(--t-3)">▍</p>';
@@ -258,12 +266,14 @@
           }
         }
       );
+      clearInterval(thinkTimer);
       report.innerHTML = renderMD(contentBuf);
       status.textContent = '完成 ✅';
       thinking.classList.remove('on');
     } catch (e) {
+      clearInterval(thinkTimer);
       status.textContent = '失败';
-      report.innerHTML = `<p style="color:var(--down)">诊断失败:${e.message}</p>`;
+      report.innerHTML = `<p style="color:var(--down)">诊断失败:${e.message}<br><span style="font-size:12px">若反复失败,请按 Ctrl+F5 强制刷新后重试,或检查网络是否能访问 api.deepseek.com</span></p>`;
     } finally {
       btn.classList.remove('busy');
     }
@@ -300,7 +310,7 @@
       alert(`已从「${f.name}」提取 ${text.length} 字并填入文本框(超长部分自动截断,建议点击「开始诊断」)。`);
     } catch (e) {
       mdState.textContent = '解析失败';
-      alert('解析失败:' + e.message);
+      alert('解析失败:' + e.message + (e.message.includes('有效文本') ? '\n\n提示:扫描版/图片型 PDF 无法提取文字,请使用文字版 PDF 或 Word 文档。' : ''));
     }
   }
 

@@ -30,8 +30,9 @@ window.PP_AI = (() => {
     return { text: (msg && msg.content) || '', reasoning: (msg && msg.reasoning_content) || '' };
   }
 
-  /* 流式对话:onDelta(内容增量), onReasoning(思考增量) */
-  async function chatStream(messages, { maxTokens = 4096, temperature = 0.4, onDelta, onReasoning, onDone } = {}) {
+  /* 流式对话:onDelta(内容增量), onReasoning(思考增量)
+     idleTimeoutMs: 超过该时长无任何数据则中止(默认 150s) */
+  async function chatStream(messages, { maxTokens = 4096, temperature = 0.4, onDelta, onReasoning, onDone, idleTimeoutMs = 150000 } = {}) {
     const res = await fetch(`${BASE}/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getKey()}` },
@@ -41,9 +42,12 @@ window.PP_AI = (() => {
     const reader = res.body.getReader();
     const dec = new TextDecoder();
     let buf = '';
+    let lastData = Date.now();
     for (;;) {
+      if (Date.now() - lastData > idleTimeoutMs) throw new Error('AI 响应超时,请重试');
       const { done, value } = await reader.read();
       if (done) break;
+      if (value && value.length) lastData = Date.now();
       buf += dec.decode(value, { stream: true });
       const lines = buf.split('\n');
       buf = lines.pop();
