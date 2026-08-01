@@ -71,7 +71,7 @@ async function fetchArticle(src, id) {
 }
 
 /* ---------- 3. DeepSeek AI 分析 ---------- */
-async function aiChat(system, user, maxTokens = 2400) {
+async function aiChat(system, user, maxTokens = 4096) {
   if (!API_KEY) throw new Error('DEEPSEEK_API_KEY 未配置');
   const r = await fetch(`${API_BASE}/chat/completions`, {
     method: 'POST',
