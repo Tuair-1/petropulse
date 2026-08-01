@@ -96,22 +96,25 @@ await runTest(
   }
 );
 
-/* papers: 拖 PDF 解析入文本框 */
+/* papers: 拖 PDF → 点击纠错 → 等待纠错报告 */
 await runTest(
-  'papers.html PDF 拖拽解析',
+  'papers.html PDF 纠错全流程',
   `${BASE}/papers.html`,
   async page => {
-    const [chooser] = await Promise.all([page.waitForEvent('filechooser', { timeout: 10000 }), page.click('#miniDrop')]);
+    const [chooser] = await Promise.all([page.waitForEvent('filechooser', { timeout: 10000 }), page.click('#dropZone')]);
     await chooser.setFiles(PDF);
+    await page.waitForSelector('#fileInfo', { state: 'visible', timeout: 10000 });
+    await page.click('#btnAnalyze');
   },
   async page => {
     await page.waitForFunction(() => {
-      const s = document.getElementById('mdState').textContent;
-      return s.includes('已提取') || s.includes('失败');
-    }, { timeout: 30000, polling: 1000 });
-    const state = await page.textContent('#mdState');
-    const len = await page.evaluate(() => document.getElementById('paperText').value.length);
-    return state.includes('失败') ? '解析失败: ' + state : `✅ ${state} | 文本框 ${len} 字`;
+      const r = document.getElementById('report');
+      const t = r ? r.textContent : '';
+      return t.includes('纠错失败') || (t.length > 100 && !t.includes('纠错报告将显示在这里'));
+    }, { timeout: LOCAL ? 40000 : 200000, polling: 3000 });
+    const t = await page.textContent('#report');
+    if (t.includes('纠错失败')) return '纠错失败: ' + t.slice(0, 150);
+    return `✅ 纠错报告输出 ${t.length} 字: ` + t.slice(0, 60).replace(/\n/g, ' ');
   }
 );
 
