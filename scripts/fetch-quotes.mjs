@@ -100,7 +100,10 @@ async function fetchYahoo() {
       if (!r) continue;
       const closes = r.indicators.quote[0].close || [];
       const px = r.meta.regularMarketPrice;
-      const prev = r.meta.chartPreviousClose;
+      /* chartPreviousClose 在部分 symbol 上不可靠,优先取历史序列倒数第二根收盘 */
+      const prev = closes.length >= 2 && closes[closes.length - 2] != null
+        ? closes[closes.length - 2]
+        : (r.meta.chartPreviousClose || null);
       if (!px) continue;
       quotes.push({
         nm: s.nm, px: round2(px), unit: s.unit,

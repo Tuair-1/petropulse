@@ -86,7 +86,10 @@ async function ppYahooDirect() {
     if (!res) continue;
     const closes = res.indicators.quote[0].close || [];
     const px = res.meta.regularMarketPrice;
-    const prev = res.meta.chartPreviousClose;
+    /* chartPreviousClose 部分 symbol 不可靠,优先取历史序列倒数第二根 */
+    const prev = closes.length >= 2 && closes[closes.length - 2] != null
+      ? closes[closes.length - 2]
+      : (res.meta.chartPreviousClose || null);
     if (px == null) continue;
     quotes.push({
       nm, px: +px.toFixed(2), unit: '美元/桶',
