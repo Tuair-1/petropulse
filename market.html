@@ -47,10 +47,10 @@
     <h1>市场数据平台</h1>
     <p class="sec-sub" style="margin-top:14px">原油、大宗化工品与产业链关键指标的交互式可视化。数据为演示样例,展示设计能力与交互体验。</p>
     <div class="mk-kpi">
-      <div class="card kpi reveal in"><div class="k">布伦特原油</div><div class="v">$59.92</div><div class="d">周涨 <b>+0.85%</b> · 年低 $54.4</div></div>
-      <div class="card kpi reveal in d1"><div class="k">石脑油 CFR 日本</div><div class="v">$548</div><div class="d">周跌 <b class="fall">-1.2%</b> · 裂解利润回升</div></div>
-      <div class="card kpi reveal in d2"><div class="k">乙烯-石脑油价差</div><div class="v">$217</div><div class="d">盈亏线 <b>$350</b> · 偏紧运行</div></div>
-      <div class="card kpi reveal in d3"><div class="k">石化景气指数</div><div class="v">62.4</div><div class="d">扩张区间(<b>&gt;50</b>) · 环比 <b>+3.2</b></div></div>
+      <div class="card kpi reveal in" data-quote="布伦特原油" data-prefix="$" data-unit="/桶"><div class="k">布伦特原油</div><div class="v">$59.92</div><div class="d">周涨 <b>+0.85%</b> · 年低 $54.4</div></div>
+      <div class="card kpi reveal in d1" data-demo><div class="k">石脑油 CFR 日本</div><div class="v">$548</div><div class="d">周跌 <b class="fall">-1.2%</b> · 裂解利润回升</div></div>
+      <div class="card kpi reveal in d2" data-demo><div class="k">乙烯-石脑油价差</div><div class="v">$217</div><div class="d">盈亏线 <b>$350</b> · 偏紧运行</div></div>
+      <div class="card kpi reveal in d3" data-demo><div class="k">石化景气指数</div><div class="v">62.4</div><div class="d">扩张区间(<b>&gt;50</b>) · 环比 <b>+3.2</b></div></div>
     </div>
   </div>
 </header>
@@ -62,15 +62,15 @@
       <!-- 原油走势 -->
       <div class="panel full reveal in">
         <div class="chart-head">
-          <div><h3>国际原油价格走势</h3><div class="tag">2024.01 — 2026.07 · 周度 · 演示数据</div></div>
-          <div class="pills" id="oilRange"><button class="pill on" data-n="52">近 1 年</button><button class="pill" data-n="135">全部</button></div>
+          <div><h3>国际原油价格走势</h3><div class="tag" id="oilTag">加载中…</div></div>
+          <div class="pills" id="oilRange"><button class="pill on" data-n="250">近 1 年</button><button class="pill" data-n="0">全部</button></div>
         </div>
         <div id="oilChart" class="chart tall"></div>
       </div>
 
       <!-- 化工品对比 -->
       <div class="panel reveal in">
-        <div class="chart-head"><div><h3>化工品价格对比</h3><div class="tag">月均 · 美元/吨</div></div></div>
+        <div class="chart-head"><div><h3>化工品价格对比</h3><div class="tag" id="chemTag">月均 · 演示数据</div></div></div>
         <div id="chemChart" class="chart tall"></div>
       </div>
 
@@ -180,12 +180,51 @@
     weekLabels.push(`${String(d.getFullYear()).slice(2)}/${String(d.getMonth() + 1).padStart(2, '0')}`);
   }
 
-  /* --- 1. 原油走势 --- */
+  /* --- 1. 原油走势(真实日K优先,演示周度兜底) --- */
   const brent = genSeries(11, 79, WEEKS, 1.9, -0.045);
   const wti   = genSeries(12, 74, WEEKS, 1.75, -0.04);
   const oilChart = echarts.init(document.getElementById('oilChart'));
+  const oilTag = document.getElementById('oilTag');
+  let oilReal = null;
+
   const paintOil = n => {
-    const len = Math.min(n, WEEKS);
+    if (oilReal && (oilReal.brent || oilReal.wti)) {
+      const src = oilReal.brent || oilReal.wti;
+      const len = n === 0 ? src.labels.length : Math.min(n, src.labels.length);
+      const series = [];
+      if (oilReal.brent) {
+        series.push({
+          name: '布伦特', type: 'line', smooth: true, symbol: 'none', data: oilReal.brent.values.slice(-len),
+          lineStyle: { width: 2.4, color: '#f6a821' },
+          areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(246,168,33,.3)' }, { offset: 1, color: 'rgba(246,168,33,0)' }]) },
+          markPoint: {
+            data: [{ type: 'max', name: '阶段高点' }, { type: 'min', name: '阶段低点' }],
+            symbolSize: 44,
+            label: { color: '#0a1120', fontSize: 10, fontWeight: 700 },
+            itemStyle: { color: '#f6a821' }
+          }
+        });
+      }
+      if (oilReal.wti) {
+        series.push({
+          name: 'WTI', type: 'line', smooth: true, symbol: 'none', data: oilReal.wti.values.slice(-len),
+          lineStyle: { width: 2, color: '#2dd4f8' }
+        });
+      }
+      oilChart.setOption({
+        ...PP_CHART_THEME,
+        animationDuration: 500,
+        grid: { ...PP_CHART_THEME.grid, top: 52 },
+        legend: { ...PP_CHART_THEME.legend },
+        xAxis: { ...PP_CHART_THEME.xAxis, data: src.labels.slice(-len), boundaryGap: false },
+        yAxis: { ...PP_CHART_THEME.yAxis, name: '美元/桶', nameTextStyle: { color: '#6b7893' } },
+        series
+      }, true);
+      oilTag.textContent = `实时日K · ${src.labels[Math.max(0, src.labels.length - len)]} — ${src.labels[src.labels.length - 1]}`;
+      return;
+    }
+    /* 演示数据兜底 */
+    const len = Math.min(n === 0 ? WEEKS : n, WEEKS);
     oilChart.setOption({
       ...PP_CHART_THEME,
       animationDuration: 500,
@@ -207,8 +246,9 @@
           lineStyle: { width: 2, color: '#2dd4f8' } }
       ]
     }, true);
+    oilTag.textContent = '演示数据 · 周度';
   };
-  paintOil(52);
+  paintOil(250);
   document.getElementById('oilRange').addEventListener('click', e => {
     const btn = e.target.closest('.pill');
     if (!btn) return;
@@ -217,7 +257,7 @@
     paintOil(+btn.dataset.n);
   });
 
-  /* --- 2. 化工品对比 --- */
+  /* --- 2. 化工品对比(甲醇可用真实月均,其余演示) --- */
   const chem = [
     { name: '乙烯',   color: '#f6a821', data: genSeries(21, 880, 31, 46, -1.5) },
     { name: '丙烯',   color: '#2dd4f8', data: genSeries(22, 745, 31, 38, -1.2) },
@@ -225,19 +265,50 @@
     { name: '对二甲苯', color: '#c084fc', data: genSeries(24, 862, 31, 42, -1.2) },
     { name: '甲醇',   color: '#fb923c', data: genSeries(25, 305, 31, 17, -0.4) }
   ];
-  echarts.init(document.getElementById('chemChart')).setOption({
-    ...PP_CHART_THEME,
-    legend: { ...PP_CHART_THEME.legend, top: 0 },
-    grid: { ...PP_CHART_THEME.grid, top: 40 },
-    xAxis: { ...PP_CHART_THEME.xAxis, data: monthLabels(2024, 1, 31), boundaryGap: false },
-    yAxis: { ...PP_CHART_THEME.yAxis, name: '美元/吨', nameTextStyle: { color: '#6b7893' } },
-    series: chem.map(s => ({
-      name: s.name, type: 'line', smooth: true, symbol: 'none', data: s.data,
-      lineStyle: { width: 2.2, color: s.color },
-      areaStyle: s.name === '乙烯' ? { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(246,168,33,.22)' }, { offset: 1, color: 'rgba(246,168,33,0)' }]) } : undefined,
-      emphasis: { focus: 'series' }
-    }))
-  });
+  const chemChart = echarts.init(document.getElementById('chemChart'));
+  const chemTag = document.getElementById('chemTag');
+
+  /* 真实日K → 月均(与演示月序列对齐,取最近 n 个月) */
+  function dailyToMonthly(labels, values, n = 31) {
+    const map = new Map();
+    labels.forEach((d, i) => {
+      const k = d.slice(0, 7);
+      const v = values[i];
+      if (v == null) return;
+      if (!map.has(k)) map.set(k, []);
+      map.get(k).push(v);
+    });
+    const keys = [...map.keys()].slice(-n);
+    return {
+      labels: keys,
+      values: keys.map(k => +(map.get(k).reduce((a, b) => a + b, 0) / map.get(k).length).toFixed(1))
+    };
+  }
+
+  function paintChem() {
+    let realMA = null;
+    if (window.PP_MARKET_STATE && window.PP_MARKET_STATE.history && window.PP_MARKET_STATE.history.ma) {
+      realMA = dailyToMonthly(window.PP_MARKET_STATE.history.ma.labels, window.PP_MARKET_STATE.history.ma.values);
+    }
+    const xLabels = realMA ? realMA.labels : monthLabels(2024, 1, 31);
+    const n = xLabels.length;
+    chemChart.setOption({
+      ...PP_CHART_THEME,
+      legend: { ...PP_CHART_THEME.legend, top: 0 },
+      grid: { ...PP_CHART_THEME.grid, top: 40 },
+      xAxis: { ...PP_CHART_THEME.xAxis, data: xLabels, boundaryGap: false },
+      yAxis: { ...PP_CHART_THEME.yAxis, name: realMA ? '元/吨(甲醇) · 美元/吨(其余)' : '美元/吨', nameTextStyle: { color: '#6b7893' } },
+      series: chem.map(s => ({
+        name: s.name, type: 'line', smooth: true, symbol: 'none',
+        data: s.name === '甲醇' && realMA ? realMA.values : s.data.slice(-n),
+        lineStyle: { width: 2.2, color: s.color },
+        areaStyle: s.name === '乙烯' ? { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(246,168,33,.22)' }, { offset: 1, color: 'rgba(246,168,33,0)' }]) } : undefined,
+        emphasis: { focus: 'series' }
+      }))
+    }, true);
+    chemTag.textContent = realMA ? `甲醇为真实月均(元/吨) · ${xLabels[0]} — ${xLabels[xLabels.length - 1]}` : '月均 · 演示数据';
+  }
+  paintChem();
 
   /* --- 3. 产能分布 --- */
   echarts.init(document.getElementById('capChart')).setOption({
@@ -354,6 +425,13 @@
         data: [{ yAxis: 350 }]
       }
     }]
+  });
+
+  /* 实时数据事件:刷新原油与化工品图表 */
+  window.addEventListener('pp:quotes', e => {
+    window.PP_MARKET_STATE = e.detail;
+    paintOil(document.querySelector('#oilRange .pill.on').dataset.n);
+    paintChem();
   });
 
   /* resize — 收集全部图表实例统一适配 */

@@ -321,7 +321,7 @@
       <div class="chart-head">
         <div>
           <h3>核心品种价格走势</h3>
-          <div class="tag">2024.01 — 2026.07 · 月均 · 演示数据</div>
+          <div class="tag" id="ovTag">加载中…</div>
         </div>
         <div class="pills" id="priceTabs">
           <button class="pill on" data-key="oil">原油</button>
@@ -362,30 +362,40 @@
           </style>
         </defs>
         <g font-family="'PingFang SC','Microsoft YaHei',sans-serif" text-anchor="middle">
-          <g class="chain-prev-node" transform="translate(120 95)">
-            <rect x="-74" y="-34" width="148" height="68" rx="14" fill="#101b30" stroke="rgba(246,168,33,.45)" stroke-width="1.5"/>
-            <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">原油 · 天然气 · 煤</text>
-            <text y="16" fill="#6b7893" font-size="11">原料资源</text>
+          <g transform="translate(120 95)">
+            <g class="chain-prev-node">
+              <rect x="-74" y="-34" width="148" height="68" rx="14" fill="#101b30" stroke="rgba(246,168,33,.45)" stroke-width="1.5"/>
+              <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">原油 · 天然气 · 煤</text>
+              <text y="16" fill="#6b7893" font-size="11">原料资源</text>
+            </g>
           </g>
-          <g class="chain-prev-node" transform="translate(360 95)">
-            <rect x="-86" y="-34" width="172" height="68" rx="14" fill="#101b30" stroke="rgba(45,212,248,.5)" stroke-width="1.5"/>
-            <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">炼油 · 蒸汽裂解</text>
-            <text y="16" fill="#6b7893" font-size="11">加工转化</text>
+          <g transform="translate(360 95)">
+            <g class="chain-prev-node">
+              <rect x="-86" y="-34" width="172" height="68" rx="14" fill="#101b30" stroke="rgba(45,212,248,.5)" stroke-width="1.5"/>
+              <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">炼油 · 蒸汽裂解</text>
+              <text y="16" fill="#6b7893" font-size="11">加工转化</text>
+            </g>
           </g>
-          <g class="chain-prev-node" transform="translate(600 95)">
-            <rect x="-86" y="-34" width="172" height="68" rx="14" fill="#101b30" stroke="rgba(52,211,153,.5)" stroke-width="1.5"/>
-            <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">烯烃 · 芳烃 · 合成气</text>
-            <text y="16" fill="#6b7893" font-size="11">基础化工品</text>
+          <g transform="translate(600 95)">
+            <g class="chain-prev-node">
+              <rect x="-86" y="-34" width="172" height="68" rx="14" fill="#101b30" stroke="rgba(52,211,153,.5)" stroke-width="1.5"/>
+              <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">烯烃 · 芳烃 · 合成气</text>
+              <text y="16" fill="#6b7893" font-size="11">基础化工品</text>
+            </g>
           </g>
-          <g class="chain-prev-node" transform="translate(840 95)">
-            <rect x="-86" y="-34" width="172" height="68" rx="14" fill="#101b30" stroke="rgba(248,113,113,.45)" stroke-width="1.5"/>
-            <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">合成材料 · 化学制品</text>
-            <text y="16" fill="#6b7893" font-size="11">下游制造</text>
+          <g transform="translate(840 95)">
+            <g class="chain-prev-node">
+              <rect x="-86" y="-34" width="172" height="68" rx="14" fill="#101b30" stroke="rgba(248,113,113,.45)" stroke-width="1.5"/>
+              <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">合成材料 · 化学制品</text>
+              <text y="16" fill="#6b7893" font-size="11">下游制造</text>
+            </g>
           </g>
-          <g class="chain-prev-node" transform="translate(1080 95)">
-            <rect x="-76" y="-34" width="152" height="68" rx="14" fill="#101b30" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>
-            <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">终端应用</text>
-            <text y="16" fill="#6b7893" font-size="11">包装 · 汽车 · 纺织 · 电子</text>
+          <g transform="translate(1080 95)">
+            <g class="chain-prev-node">
+              <rect x="-76" y="-34" width="152" height="68" rx="14" fill="#101b30" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>
+              <text y="-6" fill="#eef2fb" font-size="15" font-weight="700">终端应用</text>
+              <text y="16" fill="#6b7893" font-size="11">包装 · 汽车 · 纺织 · 电子</text>
+            </g>
           </g>
           <g stroke="url(#flowA)" stroke-width="3" fill="none" opacity=".9">
             <line class="dash-flow" x1="196" y1="88" x2="270" y2="88"/>
@@ -700,7 +710,38 @@
   };
 
   const chart = echarts.init(document.getElementById('overviewChart'));
+  const ovTag = document.getElementById('ovTag');
+  const mkSeries = (s, d, n) => ({
+    name: s.name, type: 'line', smooth: true, symbol: 'none',
+    data: n ? s.data.slice(-n) : s.data,
+    lineStyle: { width: 2.5, color: s.color },
+    areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+      { offset: 0, color: s.color + '38' }, { offset: 1, color: s.color + '00' }
+    ]) },
+    emphasis: { focus: 'series' }
+  });
+
+  /* 真实日K(布伦特/WTI)优先,演示兜底 */
+  let oilReal = null;
   const paint = key => {
+    if (key === 'oil' && oilReal) {
+      const src = oilReal.brent || oilReal.wti;
+      const series = [];
+      if (oilReal.brent) series.push({ ...mkSeries({ name: '布伦特', color: '#f6a821', data: [] }, 0), data: oilReal.brent.values });
+      if (oilReal.wti) series.push({ ...mkSeries({ name: 'WTI', color: '#2dd4f8', data: [] }, 0), data: oilReal.wti.values });
+      chart.setOption({
+        ...PP_CHART_THEME,
+        animationDuration: 700,
+        tooltip: { ...PP_CHART_THEME.tooltip, valueFormatter: v => v + ' 美元/桶' },
+        legend: { ...PP_CHART_THEME.legend },
+        grid: { ...PP_CHART_THEME.grid },
+        xAxis: { ...PP_CHART_THEME.xAxis, data: src.labels, boundaryGap: false },
+        yAxis: { ...PP_CHART_THEME.yAxis, name: '美元/桶', nameTextStyle: { color: '#6b7893' } },
+        series
+      }, true);
+      ovTag.textContent = `实时日K · ${src.labels[0]} — ${src.labels[src.labels.length - 1]}`;
+      return;
+    }
     const d = DATA[key];
     chart.setOption({
       ...PP_CHART_THEME,
@@ -710,16 +751,9 @@
       grid: { ...PP_CHART_THEME.grid },
       xAxis: { ...PP_CHART_THEME.xAxis, data: labels, boundaryGap: false },
       yAxis: { ...PP_CHART_THEME.yAxis, name: d.unit, nameTextStyle: { color: '#6b7893' } },
-      series: d.series.map(s => ({
-        name: s.name, type: 'line', smooth: true, symbol: 'none',
-        data: s.data,
-        lineStyle: { width: 2.5, color: s.color },
-        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: s.color + '38' }, { offset: 1, color: s.color + '00' }
-        ]) },
-        emphasis: { focus: 'series' }
-      }))
+      series: d.series.map(s => mkSeries(s, d))
     }, true);
+    ovTag.textContent = '2024.01 — 2026.07 · 月均 · 演示数据';
   };
   paint('oil');
   document.getElementById('priceTabs').addEventListener('click', e => {
@@ -728,6 +762,13 @@
     document.querySelectorAll('#priceTabs .pill').forEach(p => p.classList.remove('on'));
     btn.classList.add('on');
     paint(btn.dataset.key);
+  });
+  window.addEventListener('pp:quotes', e => {
+    const h = e.detail.history || {};
+    if (h.brent || h.wti) {
+      oilReal = h;
+      if (document.querySelector('#priceTabs .pill.on').dataset.key === 'oil') paint('oil');
+    }
   });
   window.addEventListener('resize', () => chart.resize());
 })();

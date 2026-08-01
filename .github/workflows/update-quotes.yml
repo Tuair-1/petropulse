@@ -1,0 +1,44 @@
+name: update-quotes
+
+on:
+  schedule:
+    # 每 20 分钟抓取一次(避开了整点/半点,分散负载)
+    - cron: '17,37,57 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-quotes
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch market quotes
+        run: node scripts/fetch-quotes.mjs
+
+      - name: Commit data changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "petropulse-bot"
+          git config user.email "petropulse-bot@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git add data/quotes.json
+          if git diff --cached --quiet; then
+            echo "数据无变化,跳过提交"
+          else
+            git commit -m "data: 行情自动更新 $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push origin main
+          fi
