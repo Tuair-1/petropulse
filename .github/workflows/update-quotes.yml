@@ -2,8 +2,10 @@ name: update-quotes
 
 on:
   schedule:
-    # 每 20 分钟抓取一次(避开了整点/半点,分散负载)
-    - cron: '17,37,57 * * *'
+    # 每 20 分钟抓取一次;GitHub Actions 的 cron 不支持逗号列表,故拆为三条
+    - cron: '17 * * * *'
+    - cron: '37 * * * *'
+    - cron: '57 * * * *'
   workflow_dispatch: {}
 
 permissions:
