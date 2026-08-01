@@ -26,6 +26,8 @@
   .art-meta .chip { font-size: 11.5px; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.04); border: 1px solid var(--line); color: var(--t-2); }
   .art-meta .chip.loc-off { border-color: rgba(45,212,248,.4); color: var(--cyan); background: rgba(45,212,248,.08); }
   .art-meta .chip.loc-on { border-color: rgba(246,168,33,.4); color: var(--amber); background: rgba(246,168,33,.08); }
+  .art-meta .chip.loc-both { border-color: rgba(251,146,60,.4); color: #fb923c; background: rgba(251,146,60,.08); }
+  .art-meta .chip.loc-na, .art-meta .chip.dep-na { border-color: var(--line); color: var(--t-3); background: rgba(255,255,255,.02); }
   .art-meta .chip.dep-deep { border-color: rgba(192,132,252,.4); color: #c084fc; background: rgba(192,132,252,.08); }
   .art-meta .chip.dep-shallow { border-color: rgba(52,211,153,.4); color: var(--up); background: rgba(52,211,153,.08); }
   .art-meta .src { margin-left: auto; font-size: 11.5px; color: var(--t-3); }
@@ -136,8 +138,10 @@
 <script>
 (function () {
   'use strict';
-  const LOC = { onshore: '陆上', offshore: '海上', both: '陆海兼涉', na: '' };
-  const DEP = { shallow: '浅层', deep: '深层', na: '' };
+  const LOC = { onshore: '陆上', offshore: '海上', both: '陆海兼涉', na: '未涉及油气' };
+  const DEP = { shallow: '浅层', deep: '深层', na: '深度未提及' };
+  const LOC_CLS = { onshore: 'loc-on', offshore: 'loc-off', both: 'loc-both', na: 'loc-na' };
+  const DEP_CLS = { shallow: 'dep-shallow', deep: 'dep-deep', na: 'dep-na' };
   let articles = [];
 
   /* 加载 journal.json */
@@ -206,8 +210,8 @@
     const ai = a.ai || {};
     const locTxt = LOC[ai.location] || '';
     const depTxt = DEP[ai.depth] || '';
-    const locCls = ai.location === 'offshore' ? 'loc-off' : (ai.location === 'onshore' ? 'loc-on' : '');
-    const depCls = ai.depth === 'deep' ? 'dep-deep' : (ai.depth === 'shallow' ? 'dep-shallow' : '');
+    const locCls = LOC_CLS[ai.location] || '';
+    const depCls = DEP_CLS[ai.depth] || '';
     return `
       <article class="card art-card clickable" style="cursor:default">
         <div class="at"><a href="${a.url}" target="_blank" rel="noopener">${a.title}</a></div>
@@ -218,7 +222,7 @@
           ${depTxt ? `<span class="chip ${depCls}">${depTxt}</span>` : ''}
           ${(ai.tags || []).map(t => `<span class="chip">${t}</span>`).join('')}
           ${a.doi ? `<a class="doi" href="https://doi.org/${a.doi}" target="_blank" rel="noopener">DOI:${a.doi}</a>` : ''}
-          <span class="src">${a.source === 'hgxb' ? '化工学报' : a.source}</span>
+          <span class="src">${a.source === 'hgxb' ? '化工学报' : a.source === 'sysydz' ? '石油实验地质' : a.source}</span>
         </div>
       </article>`;
   }

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>专业论文解读 — PetroPulse 石化脉动</title>
-<meta name="description" content="拖拽上传 Word(.docx)或 PDF 论文,AI 深度解读:研究设计、核心结论、数据评估、创新点与提升建议。">
+<meta name="description" content="拖拽上传 Word(.docx)或 PDF 论文,AI 深度解读核心知识点与创新点,帮助大学生理解专业论文。">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
@@ -82,7 +82,7 @@
     <div class="crumbs">HOME / <b>PAPER INTERPRETATION</b></div>
     <span class="eyebrow" style="text-transform:none">📄 Word / PDF 专业解读</span>
     <h1>专业论文解读</h1>
-    <p class="sec-sub" style="margin-top:14px">将论文文件<b class="hl">拖拽到下方区域</b>(或点击选择),AI 将在本地解析文本后,从研究设计、核心结论、数据与证据、创新点与不足、提升建议六个维度输出专业解读报告。所有解析在浏览器本地完成,文件不会上传。</p>
+    <p class="sec-sub" style="margin-top:14px">将论文文件<b class="hl">拖拽到下方区域</b>(或点击选择),AI 将在本地解析后,对论文的<b class="hl">核心知识点逐个拆解</b>(是什么 / 为什么重要 / 论文如何运用)、<b class="hl">解析创新点</b>(新在哪里 / 解决了什么问题),并衔接大学课程知识,帮助大学生读懂专业论文。所有解析在浏览器本地完成,文件不会上传。</p>
   </div>
 </header>
 
@@ -144,6 +144,7 @@
 </footer>
 
 <script src="assets/js/vendor/mammoth.browser.min.js"></script>
+<script src="assets/js/docparse.js"></script>
 <script src="assets/js/ai.js"></script>
 <script>
 (function () {
@@ -196,27 +197,7 @@
     report.innerHTML = '<p style="color:var(--t-3);text-align:center;padding:80px 0">解读报告将显示在这里</p>';
   });
 
-  /* ---------- 本地解析 ---------- */
-  async function parseFile(f, onProg) {
-    const buf = await f.arrayBuffer();
-    const ext = f.name.split('.').pop().toLowerCase();
-    if (ext === 'docx') {
-      const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
-      return res.value;
-    }
-    /* PDF: 动态加载 pdfjs */
-    const pdfjs = await import('./assets/js/vendor/pdf.min.mjs');
-    pdfjs.GlobalWorkerOptions.workerSrc = './assets/js/vendor/pdf.worker.min.mjs';
-    const doc = await pdfjs.getDocument({ data: buf }).promise;
-    let out = [];
-    for (let p = 1; p <= doc.numPages; p++) {
-      const page = await doc.getPage(p);
-      const tc = await page.getTextContent();
-      out.push(tc.items.map(i => i.str).join(' '));
-      onProg(p / doc.numPages);
-    }
-    return out.join('\n');
-  }
+  /* ---------- 本地解析(共享模块 PP_DOC) ---------- */
 
   /* ---------- 解读 ---------- */
   document.getElementById('btnInterpret').addEventListener('click', async () => {
@@ -227,10 +208,10 @@
     report.innerHTML = '<p style="color:var(--t-3);text-align:center;padding:60px 0">正在解析文件…</p>';
     try {
       progTxt.textContent = '解析文件中…';
-      parsedText = await parseFile(currentFile, ratio => {
+      parsedText = (await PP_DOC.parse(currentFile, ratio => {
         progBar.style.width = (ratio * 100).toFixed(0) + '%';
         progPct.textContent = (ratio * 100).toFixed(0) + '%';
-      });
+      })).text;
       if (parsedText.trim().length < 80) throw new Error('未能从文件中提取到有效文本(可能是扫描版 PDF)');
       document.getElementById('fileStat').textContent = `${currentFile.name.split('.').pop().toUpperCase()} · 已提取 ${parsedText.length} 字`;
 
@@ -244,26 +225,32 @@
       for (let i = 0; i < parsedText.length; i += 3800) chunks.push(parsedText.slice(i, i + 4000));
       progPct.textContent = '0/' + chunks.length;
 
-      const SYS = `你是石油化工领域的资深学术审稿专家。用户将分块发送一篇论文的全文文本,请对每一块进行解读,最终整合输出 Markdown 报告,结构:
+      const SYS = `你是石油化工领域的资深学术导师,擅长把专业论文讲给大学生听。用户将分块发送一篇论文的全文文本,请对每一块进行解读,最终整合输出 Markdown 报告,结构:
 
 ## 一、论文概述
 (研究问题、对象、方法与核心思路,150 字内)
 
-## 二、研究设计与方法评价
-(设计合理性、方法适用性、创新点)
+## 二、核心知识点解读(面向大学生)
+(逐个拆解论文涉及的专业概念、理论、方法与关键术语。每个知识点按如下格式:
+**知识点 1:×××**
+- 是什么:(用大学生能懂的语言解释概念本身)
+- 为什么重要:(在行业/学科中的意义)
+- 论文中如何运用:(结合论文具体内容说明)
+要求覆盖论文中的主要专业概念,通常 3-6 个;这是全篇最详细的部分)
 
-## 三、核心结论
-(逐条列出论文主要结论)
+## 三、创新点解析
+(逐条列出创新点,每条说明:新在哪里、相比传统方法/已有研究解决了什么问题、意义何在)
 
 ## 四、数据与证据评估
 (数据来源、样本量、图表质量;重点检查:术语是否误用、工艺概念是否混淆、单位与量级是否错误、结论是否有数据支撑)
 
-## 五、创新点与不足
+## 五、与课程知识的衔接
+(该论文涉及哪些大学课程内容:如油层物理、渗流力学、钻井工程、化工原理、催化原理等;哪些是教材基础知识、哪些是前沿延伸)
 
-## 六、修改与提升建议
-(按优先级列出可操作建议)
+## 六、学习建议
+(给大学生:读这篇论文应该重点理解什么、可以延伸阅读哪些方向、论文方法可否用于课程设计/毕业设计)
 
-要求:专业、具体;对缺失信息明确说明"原文未提供",不要臆测。若收到的是论文中间片段,可先输出该片段要点的解读,最终汇总时整合。`;
+要求:讲解要通俗、专业、具体;对缺失信息明确说明"原文未提供",不要臆测。若收到的是论文中间片段,可先输出该片段要点的解读,最终汇总时整合。`;
 
       let contentBuf = '', reasoningBuf = '';
       const all = [];

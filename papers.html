@@ -42,6 +42,17 @@
   .report table { border-collapse: collapse; margin: 10px 0; }
   .report td, .report th { border: 1px solid var(--line); padding: 6px 12px; font-size: 12.5px; }
   .busy { opacity: .55; pointer-events: none; }
+  .mini-drop {
+    display: flex; align-items: center; gap: 12px;
+    border: 1.5px dashed rgba(45,212,248,.4); border-radius: 12px;
+    padding: 14px 18px; cursor: pointer; margin-bottom: 12px;
+    background: rgba(45,212,248,.04); transition: all .2s;
+  }
+  .mini-drop:hover, .mini-drop.drag { border-color: var(--cyan); background: rgba(45,212,248,.09); }
+  .mini-drop .md-ico { font-size: 22px; }
+  .mini-drop .md-t { font-size: 13px; color: var(--t-2); }
+  .mini-drop .md-t b { color: var(--cyan); }
+  .mini-drop .md-s { margin-left: auto; font-size: 11.5px; color: var(--t-3); }
 </style>
 </head>
 <body>
@@ -75,7 +86,7 @@
     <div class="crumbs">HOME / <b>STUDENT PAPER DIAGNOSIS</b></div>
     <span class="eyebrow" style="text-transform:none">🎓 面向石化行业大学生论文</span>
     <h1>大学生论文诊断</h1>
-    <p class="sec-sub" style="margin-top:14px">将论文(题目/摘要/正文片段)粘贴到左侧,AI 将针对<b class="hl">学术规范</b>与<b class="hl">石化行业常识性错误</b>(术语误用、工艺流程混淆、单位与量级错误等)逐条诊断,并给出可操作的修改建议。</p>
+    <p class="sec-sub" style="margin-top:14px">将论文(题目/摘要/正文片段)粘贴到左侧,或<b class="hl">直接拖拽 Word/PDF 文档</b>自动提取全文;AI 将针对<b class="hl">学术规范</b>与<b class="hl">石化行业常识性错误</b>(术语误用、工艺流程混淆、单位与量级错误等)逐条诊断,并给出可操作的修改建议。</p>
   </div>
 </header>
 
@@ -87,6 +98,11 @@
         <div class="chart-head" style="margin-bottom:10px">
           <h3 style="font-size:16px">粘贴论文内容</h3>
           <span class="tag">建议 500—8000 字</span>
+        </div>
+        <div class="mini-drop" id="miniDrop">
+          <span class="md-ico">📄</span>
+          <span class="md-t">或<b>拖拽 Word/PDF 文档</b>到此处,自动提取全文</span>
+          <span class="md-s" id="mdState">PDF / DOCX</span>
         </div>
         <textarea id="paperText" placeholder="在此粘贴论文题目、摘要、关键词或正文片段……&#10;&#10;例如:&#10;题目:基于某油田的注水开发效果评价研究&#10;摘要:本文研究了…采用…方法…"></textarea>
         <div class="btn-row">
@@ -133,6 +149,8 @@
   </div>
 </footer>
 
+<script src="assets/js/vendor/mammoth.browser.min.js"></script>
+<script src="assets/js/docparse.js"></script>
 <script src="assets/js/ai.js"></script>
 <script>
 (function () {
@@ -250,6 +268,41 @@
       btn.classList.remove('busy');
     }
   });
+
+  /* ---------- 拖拽上传 Word/PDF ---------- */
+  const miniDrop = document.getElementById('miniDrop');
+  const mdState = document.getElementById('mdState');
+  miniDrop.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.docx';
+    input.onchange = () => input.files[0] && handleDoc(input.files[0]);
+    input.click();
+  });
+  ['dragenter', 'dragover'].forEach(ev => miniDrop.addEventListener(ev, e => { e.preventDefault(); miniDrop.classList.add('drag'); }));
+  ['dragleave', 'drop'].forEach(ev => miniDrop.addEventListener(ev, e => { e.preventDefault(); miniDrop.classList.remove('drag'); }));
+  miniDrop.addEventListener('drop', e => {
+    const f = e.dataTransfer.files[0];
+    if (f) handleDoc(f);
+  });
+
+  async function handleDoc(f) {
+    const ext = f.name.split('.').pop().toLowerCase();
+    if (ext !== 'pdf' && ext !== 'docx') { alert('仅支持 .pdf 与 .docx 文件'); return; }
+    mdState.textContent = '解析中…';
+    try {
+      const { text } = await PP_DOC.parse(f);
+      if (text.trim().length < 50) throw new Error('未能提取到有效文本(可能是扫描版 PDF)');
+      ta.value = text.trim().slice(0, 20000);
+      mdState.textContent = `已提取 ${text.length} 字`;
+      status.textContent = `文档已载入:${f.name}`;
+      ta.scrollTop = 0;
+      alert(`已从「${f.name}」提取 ${text.length} 字并填入文本框(超长部分自动截断,建议点击「开始诊断」)。`);
+    } catch (e) {
+      mdState.textContent = '解析失败';
+      alert('解析失败:' + e.message);
+    }
+  }
 
   document.getElementById('btnClear').addEventListener('click', () => {
     ta.value = '';
